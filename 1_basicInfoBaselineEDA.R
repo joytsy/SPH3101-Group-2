@@ -10,6 +10,8 @@ library(tidyverse)
 # If package not installed yet, run the following code before the code above 
 # install.packages("tidyverse")
 
+
+
 # -------- Data Processing and Manipulation --------
 # Subset and obtain basic info of TB cohort
 # Basic info columns: a1_record_id to a1_intervention
@@ -32,6 +34,21 @@ tb1_basicInfo %>%
     count=n()
   )
 
+
+
+# -------- Functions Implemented -------- 
+# Provides Percentage Distribution of Labels of 'col' variables, percent=FALSE to get counts, results are sorted in descending order
+tableDistribution <- function(col, percent=TRUE) { # pass in 'col' that we want to obtain distribution for, percent is default TRUE, which converts into percentage
+  tab <- table(as_factor(col)) # provides contingency table
+  if (percent==TRUE) { # if TRUE, will get percentage distribution
+    sort((tab/sum(tab))*100, decreasing = TRUE)
+  } else { # if not TRUE (FALSE), will get frequency distribution only
+    sort(tab, decreasing = TRUE)
+  }
+}
+
+
+
 # -------- Summary Statistics and Distributions --------
 # ** None of the observations (individual's data) were removed i.e. columns with some missing data and outliers are included. **
 # Summary statistics of treatment duration
@@ -43,27 +60,27 @@ summary(as.numeric(tb1_basicInfo$treatmentDuration))
 # Distribution of Treatment Status
 ## Brief Summary: Majority (58.1%) have completed their treatment, followed by being cured (37.6%). 
 ## Remaining cases have died, lost to F/U or classified under other reasons.
-statusTab <- table(tb1_basicInfo$case_status)
-sort((statusTab/sum(statusTab))*100, decreasing=TRUE)
+statusTab <- tableDistribution(tb1_basicInfo$case_status)
+statusTab
 
 
 # Distribution of Individuals from Different Provinces
 ## Brief Summary: 46.0% come from Kandal, followed by 22.1% from Tboung Khmum, 18.8% from Kampong Cham and 13.1% from Phnom Penh.
-provTab <- table(as_factor(tb1_basicInfo$a1_prov))
-sort((provTab/sum(provTab))*100, decreasing = TRUE)
+provTab <- tableDistribution(tb1_basicInfo$a1_prov)
+provTab
 
 
 # Distribution of Individuals from Operational Districts
 ## Brief Summary: Top 3 Operational Districts with this cohort of TB diagnosed individuals are
 ## Sa Ang Health OD (28.O%), Ou Raing Euv Health OD (19.6%) and Stung Trang Health OD (10.9%).
-operDistTab <- table(as_factor(tb1_basicInfo$a1_operat_dist))
-sort((operDistTab/sum(operDistTab))*100, decreasing=TRUE)
+operDistTab <- tableDistribution(tb1_basicInfo$a1_operat_dist)
+operDistTab
 
 
 # Distribution of Types of TB
 ## Brief Summary: Only 3 types of TB detected in this cohort, with 56.2% with TB Bac-, 38.7% with TB Bac+ and 5.1% with RR TB.
-tbTypesTab <- table(as_factor(tb1_basicInfo$a1_type_tb))
-sort((tbTypesTab/sum(tbTypesTab))*100, decreasing=TRUE)
+tbTypesTab <- tableDistribution(tb1_basicInfo$a1_type_tb)
+tbTypesTab
 
 
 # -------- Other EDA Stuff i.e. Bivariate Variables  --------
@@ -106,3 +123,4 @@ tb1_basicInfo %>%
     count=n() 
   ) %>%
   pivot_wider(id_cols = a1_prov, names_from="a1_type_tb", values_from="count")
+
