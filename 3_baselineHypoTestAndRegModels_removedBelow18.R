@@ -31,6 +31,12 @@ library(haven)
 # -------- Data Processing and Manipulation --------
 data <- datatb1 # created new df 'data' to modify on
 
+# to remove individuals < 18 from data
+data <- data %>%
+  filter(a1_q3>=18)
+
+
+
 # convert categorical variables to factors
 data[,"a1_q1"] <- as.factor(data[,"a1_q1"]) # sex
 data[,"a1_q5"] <- as.factor(data[,"a1_q5"]) # education
@@ -211,6 +217,8 @@ mod4 <- lm(data$stigma_score~data$a1_q28___1+data$a1_q28___3+ # removed a1_q28__
              data$a1_q28___5+data$a1_q28___8+data$a1_type_tb+data$a1_operat_dist)
 summary(mod4)
 
+## --------- without removing < 18 yo individuals ---------
+
 mod5 <- lm(data$stigma_score~data$a1_q28___1+data$a1_q28___3+ # removed a1_operat_dist 
              data$a1_q28___5+data$a1_q28___8+data$a1_type_tb)
 summary(mod5)
@@ -223,6 +231,19 @@ mod7 <- lm(data$stigma_score~data$a1_q28___1+ # removed a1_type_tb
              data$a1_q28___5+data$a1_q28___8)
 summary(mod7)
 
+## ---------  removing < 18 yo individuals ---------
+
+mod5_1 <- lm(data$stigma_score~data$a1_q28___1+data$a1_q28___3+ # removed a1_type_tb from mod4 
+             data$a1_q28___5+data$a1_q28___8+data$a1_operat_dist)
+summary(mod5_1)
+
+mod6_1 <- lm(data$stigma_score~data$a1_q28___1+data$a1_q28___3+ # removed a1_operat_dist 
+               data$a1_q28___5+data$a1_q28___8)
+summary(mod6_1)
+
+mod7_1 <- lm(data$stigma_score~data$a1_q28___1+ # removed a1_q28___3 (chest pain)
+               data$a1_q28___5+data$a1_q28___8)
+summary(mod7_1)
 
 
 # -------- Logistic Regresion of Stigma Levels against Significant Predictor Variables  --------
