@@ -8,6 +8,10 @@ library(haven)
 # -------- Data Processing and Manipulation --------
 data <- datatb1 # created new df 'data' to modify on
 
+# remove observations where individuals < 18
+data <- data %>% 
+  filter(a1_q3>=18)
+
 # convert categorical variables to factors
 data[,"a1_q1"] <- as.factor(data[,"a1_q1"]) # sex
 data[,"a1_q5"] <- as.factor(data[,"a1_q5"]) # education
@@ -74,7 +78,7 @@ summary(data$a1_q3)
 hist(data$a1_q3, main = "Histogram of Participant Age (Baseline)")
 boxplot(data$a1_q3, main = "Boxplot of Participant Age (Baseline)")
 # T-test for age (since normally distributed)
-## Not significant --> p-value = 0.3987
+## Not significant --> p-value = 0.3814
 t.test(data$a1_q3[data$stigma_threshold %in% "High"], data$a1_q3[data$stigma_threshold %in% "Low"])
 
 # Income 
@@ -82,7 +86,7 @@ summary(data$a1_q7)
 boxplot(data$a1_q7, main = "Boxplot of Average Family Monthly Income (Baseline)")
 hist(data$a1_q7, main = "Histogram of Average Family Monthly Income (Baseline)")
 # Wilcox Test for income (since right-skewed distribution)
-## Not significant --> p-value = 0.3455
+## Not significant --> p-value = 0.3361
 wilcox.test(data$a1_q7[data$stigma_threshold %in% "High"], data$a1_q7[data$stigma_threshold %in% "Low"])
 
 # Distance to Nearest Health Facility
@@ -90,7 +94,7 @@ summary(data$a1_q12)
 hist(data$a1_q12, breaks = 40, main = "Histogram of Distance to Nearest Health Facilities (Baseline)")
 boxplot(data$a1_q12,main = "Boxplot of Distance to Nearest Health Facilities (Baseline)")
 # T-test for distance to nearest health facility
-## Not significant --> p-value = 0.1419
+## Not significant --> p-value = 0.1377
 t.test(data$a1_q12[data$stigma_threshold %in% "High"], data$a1_q12[data$stigma_threshold %in% "Low"])
 
 # Time to travel to nearest facility
@@ -98,7 +102,7 @@ summary(data$a1_q13)
 hist(data$a1_q13, breaks = 30, main = "Histogram of Travel Time to Nearest Health Facilities (Baseline)")
 boxplot(data$a1_q13,main = "Boxplot of Travel Time to Nearest Health Facilities (Baseline)")
 # T-test for time to travel to nearest facility
-## Not significant --> p-value = 0.8238
+## Not significant --> p-value = 0.7969
 t.test(data$a1_q13[data$stigma_threshold %in% "High"], data$a1_q13[data$stigma_threshold %in% "Low"])
 
 # Treatment Duration
@@ -106,7 +110,7 @@ summary(as.numeric(data$treatmentDuration))
 hist(as.numeric(data$treatmentDuration), breaks = 30)
 boxplot(as.numeric(data$treatmentDuration), breaks = 30)
 # T-test for Treatment Duration
-## Not significant --> p-value = 0.1615
+## Not significant --> p-value = 0.1617
 t.test(as.numeric(data$treatmentDuration)[data$stigma_threshold %in% "High"], 
        as.numeric(data$treatmentDuration)[data$stigma_threshold %in% "Low"])
 
@@ -116,7 +120,7 @@ t.test(as.numeric(data$treatmentDuration)[data$stigma_threshold %in% "High"],
 table(data$stigma_threshold, factor(data$a1_q1,
              levels = c(1, 2), 
              labels = c("Male", "Female")))
-chisq.test(data$stigma_threshold, data$a1_q1) ## Not significant --> p-value = 0.3379
+chisq.test(data$stigma_threshold, data$a1_q1) ## Not significant --> p-value = 0.3402
 
 
 
@@ -124,25 +128,28 @@ chisq.test(data$stigma_threshold, data$a1_q1) ## Not significant --> p-value = 0
 table(data$stigma_threshold, factor(data$a1_q5,
              levels = c(1, 2, 3, 4, 5), 
              labels = c("Primary", "Secondary", "High School", "University or Higher", "No Formal Schooling")))
-chisq.test(data$stigma_threshold, data$a1_q5) ## Not significant --> p-value = 0.7161
+chisq.test(data$stigma_threshold, data$a1_q5) ## Not significant --> p-value = 0.7299
 
+# group into abovePrimary Yes and No
+table(data$stigma_threshold, data$abovePrimary)
+chisq.test(data$stigma_threshold, data$abovePrimary) ## Not significant --> p-value = 0.2429
 
 
 # ---- Smoking History (so long as the individual has smoked before) ----
 table(data$stigma_threshold, factor(data$a1_q16,
                                     levels = c(1, 2), 
                                     labels = c("Smoker", "Non Smoker")))
-chisq.test(data$stigma_threshold, data$a1_q16) ## Not significant --> p-value = 0.3244
+chisq.test(data$stigma_threshold, data$a1_q16) ## Not significant --> p-value = 0.3265
 
 
 
 # ---- Alcohol Consumption ----
 table(data$stigma_threshold,data$alcoholConsumer)
 chisq.test(data$stigma_threshold, data$alcoholConsumer) # Not significant, p-value = 0.9414
-table(data$stigma_threshold,factor(datatb1$a1_q18, 
+table(data$stigma_threshold,factor(data$a1_q18, 
              levels = c(1, 2, 3, 4, 5), 
              labels = c(">=4x per Week", "2-3x per Week", "2-4x per Month", "Once a month or less", "No")))
-chisq.test(data$stigma_threshold, data$a1_q18) # Not significant --> p-value = 0.3905
+chisq.test(data$stigma_threshold, data$a1_q18) # Not significant --> p-value = 0.4725
 
 
 
@@ -150,7 +157,7 @@ chisq.test(data$stigma_threshold, data$a1_q18) # Not significant --> p-value = 0
 table(data$stigma_threshold, factor(data$a1_q4,
              levels = c(1, 2, 3, 4), 
              labels = c("Never Married", "Married", "Divorced/separated", "Widowed")))
-chisq.test(data$stigma_threshold, data$a1_q4) ## Not significant --> p-value = 0.513
+chisq.test(data$stigma_threshold, data$a1_q4) ## Not significant --> p-value = 0.6619
 
 
 
@@ -167,7 +174,7 @@ chisq.test(data$stigma_threshold[data$case_status %in% c("completed", "cured")],
 table(data$stigma_threshold, factor(data$a1_type_tb,
              levels = c(1, 2, 3, 4), 
              labels = c("TB Bac+", "TB Bac-", "Multidrug-resistant TB", "RR TB")))
-chisq.test(data$stigma_threshold, data$a1_type_tb) # significant --> p-value = 0.03122
+chisq.test(data$stigma_threshold, data$a1_type_tb) # significant --> p-value = 0.0434
 
 
 
@@ -195,65 +202,65 @@ chisq.test(data$stigma_threshold, factor(data$a1_q21,
                                          labels = c("Positive", "Negative", "Not Sure", "I do not want to disclose"))) #  Chi-squared approximation may be incorrect
 
 # ---- Previous TB Diagnosis ----
-table(data$stigma_threshold, factor(datatb1$a1_q24,
+table(data$stigma_threshold, factor(data$a1_q24,
              levels = c(1, 2, 3), 
              labels = c("Yes", "No", "Don't Know")))
-chisq.test(data[data$a1_q24 %in% c(1,2), ]$stigma_threshold, data[data$a1_q24 %in% c(1,2), ]$a1_q24) ## Not significant --> p-value = 0.05892
+chisq.test(data[data$a1_q24 %in% c(1,2), ]$stigma_threshold, data[data$a1_q24 %in% c(1,2), ]$a1_q24) ## Not significant --> p-value = 0.05858
 
 
 # ----------------------------- Various TB Symptoms Contracted --------------------------------
 # 1. Cough
-table(data$stigma_threshold, factor(datatb1$a1_q28___1,
+table(data$stigma_threshold, factor(data$a1_q28___1,
              levels = c(0, 1), 
              labels = c("No", "Yes")), useNA = 'ifany')
 chisq.test(data$stigma_threshold, data$a1_q28___1) ## Significant --> p-value < 0.01
 
 # 2. Cough with Blood
-table(data$stigma_threshold, factor(datatb1$a1_q28___2,
+table(data$stigma_threshold, factor(data$a1_q28___2,
              levels = c(0, 1), 
              labels = c("No", "Yes")), useNA = 'ifany')
 chisq.test(data$stigma_threshold, data$a1_q28___2) ## Not significant --> p-value = 0.3472
 
 # 3. Chest Pain
-table(data$stigma_threshold, factor(datatb1$a1_q28___3,
+table(data$stigma_threshold, factor(data$a1_q28___3,
              levels = c(0, 1), 
              labels = c("No", "Yes")), useNA = 'ifany')
 chisq.test(data$stigma_threshold, data$a1_q28___3) ## Significant --> p-value < 0.01
 
 # 4. Dyspnea (Shortness of Breath)
-table(data$stigma_threshold, factor(datatb1$a1_q28___4,
+table(data$stigma_threshold, factor(data$a1_q28___4,
              levels = c(0, 1), 
              labels = c("No", "Yes")), useNA = 'ifany')
 chisq.test(data$stigma_threshold, data$a1_q28___4) ## Significant --> p-value < 0.01
 
 # 5. Fever
-table(data$stigma_threshold, factor(datatb1$a1_q28___5,
+table(data$stigma_threshold, factor(data$a1_q28___5,
              levels = c(0, 1), 
              labels = c("No", "Yes")), useNA = 'ifany')
 chisq.test(data$stigma_threshold, data$a1_q28___5) ## Significant --> p-value < 0.01
 
 # 6. Chills
-table(data$stigma_threshold, factor(datatb1$a1_q28___6,
+table(data$stigma_threshold, factor(data$a1_q28___6,
              levels = c(0, 1), 
              labels = c("No", "Yes")), useNA = 'ifany')
 chisq.test(data$stigma_threshold, data$a1_q28___6) ## Not significant --> p-value = 0.136
 
 # 7. Loss of Weight
-table(data$stigma_threshold, factor(datatb1$a1_q28___7,
+table(data$stigma_threshold, factor(data$a1_q28___7,
              levels = c(0, 1), 
              labels = c("No", "Yes")), useNA = 'ifany')
 chisq.test(data$stigma_threshold, data$a1_q28___7) ## Significant --> p-value < 0.01
 
 
 # 8. Night Sweat
-table(data$stigma_threshold, factor(datatb1$a1_q28___8,
+table(data$stigma_threshold, factor(data$a1_q28___8,
              levels = c(0, 1), 
              labels = c("No", "Yes")), useNA = 'ifany')
 chisq.test(data$stigma_threshold, data$a1_q28___8) ## Significant --> p-value < 0.01
 
 
 # 9. Other Symptoms
-table(data$stigma_threshold, factor(datatb1$a1_q28___9,
+table(data$stigma_threshold, factor(data$a1_q28___9,
              levels = c(0, 1), 
              labels = c("No", "Yes")), useNA = 'ifany')
 chisq.test(data$stigma_threshold, data$a1_q28___9) ## Significant --> p-value < 0.01
@@ -261,51 +268,51 @@ chisq.test(data$stigma_threshold, data$a1_q28___9) ## Significant --> p-value < 
 
 # ----------------------------- Various Other Medical Conditions --------------------------------
 # Stroke
-table(factor(datatb1$a1_q20___1, levels = c(0, 1), labels = c("No", "Yes")))
-table(data$stigma_threshold, factor(datatb1$a1_q20___1, levels = c(0, 1), labels = c("No", "Yes")))
+table(factor(data$a1_q20___1, levels = c(0, 1), labels = c("No", "Yes")))
+table(data$stigma_threshold, factor(data$a1_q20___1, levels = c(0, 1), labels = c("No", "Yes")))
 chisq.test(data$stigma_threshold, data$a1_q20___1)
 
 # Heart Disease
-table(factor(datatb1$a1_q20___2, levels = c(0, 1), labels = c("No", "Yes")))
-table(data$stigma_threshold, factor(datatb1$a1_q20___2, levels = c(0, 1), labels = c("No", "Yes")))
+table(factor(data$a1_q20___2, levels = c(0, 1), labels = c("No", "Yes")))
+table(data$stigma_threshold, factor(data$a1_q20___2, levels = c(0, 1), labels = c("No", "Yes")))
 chisq.test(data$stigma_threshold, data$a1_q20___2)
 
 # Hypertension
-table(factor(datatb1$a1_q20___3, levels = c(0, 1), labels = c("No", "Yes")))
-table(data$stigma_threshold, factor(datatb1$a1_q20___3, levels = c(0, 1), labels = c("No", "Yes")))
+table(factor(data$a1_q20___3, levels = c(0, 1), labels = c("No", "Yes")))
+table(data$stigma_threshold, factor(data$a1_q20___3, levels = c(0, 1), labels = c("No", "Yes")))
 chisq.test(data$stigma_threshold, data$a1_q20___3)
 
 # Diabetes
-table(factor(datatb1$a1_q20___4, levels = c(0, 1), labels = c("No", "Yes")))
-table(data$stigma_threshold, factor(datatb1$a1_q20___4, levels = c(0, 1), labels = c("No", "Yes")))
+table(factor(data$a1_q20___4, levels = c(0, 1), labels = c("No", "Yes")))
+table(data$stigma_threshold, factor(data$a1_q20___4, levels = c(0, 1), labels = c("No", "Yes")))
 chisq.test(data$stigma_threshold, data$a1_q20___4)
 
 # Asthma
-table(factor(datatb1$a1_q20___5, levels = c(0, 1), labels = c("No", "Yes")))
-table(data$stigma_threshold, factor(datatb1$a1_q20___5, levels = c(0, 1), labels = c("No", "Yes")))
+table(factor(data$a1_q20___5, levels = c(0, 1), labels = c("No", "Yes")))
+table(data$stigma_threshold, factor(data$a1_q20___5, levels = c(0, 1), labels = c("No", "Yes")))
 chisq.test(data$stigma_threshold, data$a1_q20___5)
 
 # Lung Disease
-table(factor(datatb1$a1_q20___6, levels = c(0, 1), labels = c("No", "Yes")))
-table(data$stigma_threshold, factor(datatb1$a1_q20___6, levels = c(0, 1), labels = c("No", "Yes")))
+table(factor(data$a1_q20___6, levels = c(0, 1), labels = c("No", "Yes")))
+table(data$stigma_threshold, factor(data$a1_q20___6, levels = c(0, 1), labels = c("No", "Yes")))
 chisq.test(data$stigma_threshold, data$a1_q20___6)
 
 # Liver Disease
-table(factor(datatb1$a1_q20___7, levels = c(0, 1), labels = c("No", "Yes")))
-table(data$stigma_threshold, factor(datatb1$a1_q20___7, levels = c(0, 1), labels = c("No", "Yes")))
+table(factor(data$a1_q20___7, levels = c(0, 1), labels = c("No", "Yes")))
+table(data$stigma_threshold, factor(data$a1_q20___7, levels = c(0, 1), labels = c("No", "Yes")))
 chisq.test(data$stigma_threshold, data$a1_q20___7)
 
 # Mental Illness
-table(factor(datatb1$a1_q20___8, levels = c(0, 1), labels = c("No", "Yes")))
-table(data$stigma_threshold, factor(datatb1$a1_q20___8, levels = c(0, 1), labels = c("No", "Yes")))
+table(factor(data$a1_q20___8, levels = c(0, 1), labels = c("No", "Yes")))
+table(data$stigma_threshold, factor(data$a1_q20___8, levels = c(0, 1), labels = c("No", "Yes")))
 chisq.test(data$stigma_threshold, data$a1_q20___8)
 
 # Other Conditions Diagnosed
-table(factor(datatb1$a1_q20___9, levels = c(0, 1), labels = c("No", "Yes")))
-table(data$stigma_threshold, factor(datatb1$a1_q20___9, levels = c(0, 1), labels = c("No", "Yes")))
+table(factor(data$a1_q20___9, levels = c(0, 1), labels = c("No", "Yes")))
+table(data$stigma_threshold, factor(data$a1_q20___9, levels = c(0, 1), labels = c("No", "Yes")))
 chisq.test(data$stigma_threshold, data$a1_q20___9)
 
 # No Other Conditions - 'Yes' means no other conditions, 'No' means individual has one of the above conditions
-table(factor(datatb1$a1_q20___10, levels = c(0, 1), labels = c("No", "Yes")))
-table(data$stigma_threshold, factor(datatb1$a1_q20___10, levels = c(0, 1), labels = c("No", "Yes")))
+table(factor(data$a1_q20___10, levels = c(0, 1), labels = c("No", "Yes")))
+table(data$stigma_threshold, factor(data$a1_q20___10, levels = c(0, 1), labels = c("No", "Yes")))
 chisq.test(data$stigma_threshold, data$a1_q20___10)
