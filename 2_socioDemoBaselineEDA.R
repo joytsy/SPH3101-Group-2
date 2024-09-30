@@ -115,7 +115,7 @@ table(data$stigma_threshold, data$abovePrimary)
 occupationTab <- tableDistribution(data$a1_q6, percent=FALSE)
 occupationTab
 
-# 2xn contingency table of Stigma Levels and Education Level
+# 2xn contingency table of Stigma Levels and Occupation
 table(data$stigma_threshold, as_factor(data$a1_q6))
 
 

@@ -115,12 +115,12 @@ data %>%
 
 # Frequency Distribution of Relapse/Non-Relapse Cases among Different Types of TB
 data %>%
-  group_by(as_factor(a1_status_tb_during_fu), as_factor(a1_exp_relap_reinf_lfu_fu)) %>%
+  group_by(as_factor(a1_exp_relap_reinf_lfu_fu), as_factor(a1_type_tb_fu)) %>%
   summarise(
     count=n()
   ) %>% 
-  pivot_wider(id_cols = 'as_factor(a1_status_tb_during_fu)', 
-              names_from='as_factor(a1_exp_relap_reinf_lfu_fu)', 
+  pivot_wider(id_cols = 'as_factor(a1_exp_relap_reinf_lfu_fu)', 
+              names_from='as_factor(a1_type_tb_fu)', 
               values_from="count")
 
 
@@ -213,3 +213,4 @@ data %>%
     count=n(), # number of observations
     n_missing= sum(is.na(stigma_score)) # count number of missing values (should be 212)
   )
+

@@ -18,7 +18,6 @@ data <- datatb1 # created new df 'data' to modify on
 
 # 20240925: Removed Following Observations
 # - 4 observations with age < 18 (only interested in adult cohort >= 18 years)
-
 data <- data %>%
   filter(a1_q3>=18)
 
@@ -43,7 +42,7 @@ data <- data %>%
   mutate(
     stigma_threshold = case_when(
       stigma_score > 15.4 ~ "High",  # Categorize as High if stigma_score > 15.4
-      stigma_score < 15.4 ~ "Low",  # Categorize as Low if stigma_score <= 15.4
+      stigma_score <= 15.4 ~ "Low",  # Categorize as Low if stigma_score <= 15.4
       TRUE ~ NA_character_  # Handle any unexpected cases
     )
   )
