@@ -74,6 +74,11 @@ ggplot(data, aes(x = a1_q3)) +
   labs(title = "Age Distribution among Adult TB Cohort",
        x = "Age", y = "Count")
 
+# boxplot of age distribution
+ggplot(data, aes(x="", y=a1_q3)) +
+  geom_boxplot(fill = "indianred") +
+  labs(title = "Boxplot of Age Distribution", x = "", y = "Age")
+
 
 # Marital Status Distribution
 ## Brief Summary
@@ -133,6 +138,11 @@ ggplot(data, aes(x = a1_q7)) +
   labs(title = "Average Family Income in past 6 months among Adult TB Cohort",
        x = "Average Income", y = "Count")
 
+# boxplot of income distribution
+ggplot(data, aes(x="", y=a1_q7)) +
+  geom_boxplot(fill = "indianred") +
+  labs(title = "Boxplot of Average Family Income Distribution", x = "", y = "Income")
+
 
 # Residential Address Distribution (more for checking whether there is loss to f/u later)
 ## Brief Summary: Most of them stay in the same OD where interview takes place (821) while the remaining 12 are classified as other.
@@ -186,13 +196,13 @@ summary(data$a1_q12)
 
 ggplot(data, aes(x="", y=a1_q12)) +
   geom_boxplot(fill = "indianred") +
-  labs(title = "Boxplot of Distance between House and Nearest Facility", x = "", y = "Distance")
+  labs(title = "Boxplot of Distance to Nearest Health Facilities", x = "", y = "Distance")
 
 ggplot(data, aes(x = a1_q12)) +
   geom_histogram(aes(y = ..count..), col = "white", fill = "indianred", binwidth = 1, boundary=0) + # split into range of 1
   geom_text(stat = 'bin', aes(label = ..count.., y = ..count..), binwidth = 1, boundary=0,
             vjust = -0.5, color = "black") +  # Adding text of counts above the bars
-  labs(title = "Distance between House and Nearest Facility",
+  labs(title = "Distance to Nearest Health Facilities",
        x = "Distance", y = "Count")
 
 # Summary Statistics of Duration to Reach Nearest Health Facilities
@@ -202,13 +212,13 @@ summary(data$a1_q13)
 
 ggplot(data, aes(x="", y=a1_q13)) +
   geom_boxplot(fill = "indianred") +
-  labs(title = "Boxplot of Travel Time between House and Nearest Facility", x = "", y = "Time")
+  labs(title = "Boxplot of Travel Time to Nearest Health Facilites", x = "", y = "Time")
 
 ggplot(data, aes(x = a1_q13)) +
   geom_histogram(aes(y = ..count..), col = "white", fill = "indianred", binwidth = 5, boundary=0) + # split into ranges of 5
   geom_text(stat = 'bin', aes(label = ..count.., y = ..count..), binwidth = 5, boundary=0,
             vjust = -0.5, color = "black") +  # Adding text of counts above the bars
-  labs(title = "Time to Travel to Nearest Facility",
+  labs(title = "Travel Time to Nearest Health Facilities",
        x = "Time Taken", y = "Count")
 
 
