@@ -15,6 +15,10 @@ data <- datatb1
 #################################################
 ## Data Processing and Manipulation (Baseline) ##
 #################################################
+# remove observations where individuals < 18 yo
+datatb1 <- datatb1 %>% 
+  filter(a1_q3>=18)
+
 ### Create additional "stigma_score" column using sum a1_q30 to a1_q41, note: max stigma_score is 12*4=48 with 48 being greater stigma experience
 datatb1 <- datatb1 %>%
   mutate(stigma_score = rowSums(across(a1_q30:a1_q41)))
@@ -22,8 +26,8 @@ datatb1 <- datatb1 %>%
 # statistical summary of crude sigma_score
 summary(datatb1$stigma_score)
 
-# Categorize stigma_score using mean (use mean of 25.1, as we compared with  a similar study)
-threshold <- 25.1
+# Categorize stigma_score using mean (use baseline mean of 15.4)
+threshold <- 15.4 # mean of baseline stigma_scores
 datatb1 <- datatb1 %>%
   mutate(
     stigma_threshold = case_when(
@@ -36,27 +40,47 @@ datatb1 <- datatb1 %>%
 # Visualize distributions of stigma_score at baseline
 ggplot(datatb1, aes(x = stigma_score)) + 
   geom_histogram(bins = 30, fill = "blue", color = "black") +
-  labs(title = "Distribution of Stigma Scores", x = "Stigma Score", y = "Frequency")
+  labs(title = "Distribution of Stigma Scores (Baseline)", x = "Stigma Score", y = "Frequency")
 
 # Visualize distributions of stigma_threshold at baseline using bar plot
 ggplot(datatb1, aes(x = stigma_threshold)) + 
   geom_bar(fill = "blue", color = "black") +
-  labs(title = "Distribution of Stigma Scores", x = "Stigma Threshold", y = "Frequency") +
+  labs(title = "Distribution of Stigma Scores (Baseline)", x = "Stigma Threshold", y = "Frequency") +
   theme_minimal()
 
 
 ##################################################
 ## Data Processing and Manipulation (Follow up) ##
 ##################################################
+# remove observations where individuals < 18 yo
+datatb2 <- datatb2 %>%
+  filter(a1_record_id %in% datatb1$a1_record_id)
+
 datatb2 <- datatb2 %>%
   mutate(stigma_score = rowSums(across(a1_q7_fu:a1_q18_fu)))
 
 summary(datatb2$stigma_score)
 
+# Categorize stigma_score using mean (use baseline mean of 15.4)
+datatb2 <- datatb2 %>%
+  mutate(
+    stigma_threshold = case_when(
+      stigma_score > threshold ~ "High",  # Categorize as High if stigma_score > 15.4
+      stigma_score <= threshold ~ "Low",  # Categorize as Low if stigma_score <= 15.4
+      TRUE ~ NA_character_  # Handle any unexpected cases
+    )
+  )
+
 # Visualize distributions of stigma scores at follow up
 ggplot(datatb2, aes(x = stigma_score)) + 
   geom_histogram(bins = 30, fill = "blue", color = "black") +
-  labs(title = "Distribution of Stigma Scores", x = "Stigma Score", y = "Frequency")
+  labs(title = "Distribution of Stigma Scores (Follow-Up)", x = "Stigma Score", y = "Frequency")
+
+# Visualize distributions of stigma_threshold at follow up using bar plot
+ggplot(datatb2, aes(x = stigma_threshold)) + 
+  geom_bar(fill = "blue", color = "black") +
+  labs(title = "Distribution of Stigma Scores (Follow-Up)", x = "Stigma Threshold", y = "Frequency") +
+  theme_minimal()
 
 # -------- Data Processing and Manipulation --------
 # Convert the labelled variable to numeric or factor
@@ -117,8 +141,29 @@ hist3 <- hist(baseline_refuse_followup$stigma_score,main='Refuse to follow-up', 
 summary(baseline_loss_followup$stigma_score)
 hist4 <- hist(baseline_loss_followup$stigma_score, main='Loss to follow-up', xlab='Stigma Score', labels=TRUE)
 
-t.test(datatb1$stigma_score[!is.na(datatb2$stigma_score)],datatb2$stigma_score[!is.na(datatb2$stigma_score)] , paired=TRUE)
-boxplot(datatb1$stigma_score[!is.na(datatb2$stigma_score)],datatb2$stigma_score[!is.na(datatb2$stigma_score)], names = c("Baseline", "Follow up"))
+
+# Visualize distributions of stigma_score at baseline for the 621 individuals who followed up
+ggplot(baseline_followup_complete, aes(x = stigma_score)) + 
+  geom_histogram(bins = 30, fill = "blue", color = "black") +
+  labs(title = "Distribution of Stigma Scores (Baseline)", x = "Stigma Score", y = "Frequency")
+
+# Visualize distributions of stigma_score at follow up for the 621 individuals who followed up
+ggplot(datatb2_followup, aes(x = stigma_score)) + 
+  geom_histogram(bins = 30, fill = "blue", color = "black") +
+  labs(title = "Distribution of Stigma Scores (Follow-Up)", x = "Stigma Score", y = "Frequency")
+
+
+# Shapiro-Wilk test to test for normality in both baseline and follow up cohorts of 621 individuals
+# baseline: p-value < 0.01 --> data is likely not normally distributed
+shapiro.test(datatb1$stigma_score[!is.na(datatb2$stigma_score)])
+# follow-up: p-value < 0.01 --> data is likely not normally distributed
+shapiro.test(datatb2$stigma_score[!is.na(datatb2$stigma_score)])
+
+# Since not normally distributed, use wilcoxon to compare the sample of 621 at different time frames
+wilcox.test(datatb1$stigma_score[!is.na(datatb2$stigma_score)],datatb2$stigma_score[!is.na(datatb2$stigma_score)] , paired=TRUE)
+boxplot(datatb1$stigma_score[!is.na(datatb2$stigma_score)],datatb2$stigma_score[!is.na(datatb2$stigma_score)], names = c("Baseline", "Follow up"),
+        main = "Boxplot of Stigma Scores of Follow Up Cohort at Baseline and Follow-Up")
+
 hist(datatb1$stigma_score)
 hist(datatb2$stigma_score)
 
