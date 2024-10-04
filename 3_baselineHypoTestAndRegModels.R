@@ -31,6 +31,10 @@ library(haven)
 # -------- Data Processing and Manipulation --------
 data <- datatb1 # created new df 'data' to modify on
 
+# to remove individuals < 18 from data
+data <- data %>%
+  filter(a1_q3>=18)
+
 # convert categorical variables to factors
 data[,"a1_q1"] <- as.factor(data[,"a1_q1"]) # sex
 data[,"a1_q5"] <- as.factor(data[,"a1_q5"]) # education
@@ -75,19 +79,19 @@ data <- data %>%
 
 # -------- Hypothesis Testing for Continuous Variables (t-test and wilcox) --------
 # T-test for age (since normally distributed)
-## Not significant --> p-value = 0.3987
+## Not significant --> p-value = 0.3814
 t.test(data$a1_q3[data$stigma_threshold %in% "High"], data$a1_q3[data$stigma_threshold %in% "Low"])
 
 # Wilcox Test for income (since right-skewed distribution)
-## Not significant --> p-value = 0.3455
+## Not significant --> p-value = 0.3361
 wilcox.test(data$a1_q7[data$stigma_threshold %in% "High"], data$a1_q7[data$stigma_threshold %in% "Low"])
 
 # T-test for distance to nearest health facility
-## Not significant --> p-value = 0.1419
+## Not significant --> p-value = 0.1377
 t.test(data$a1_q12[data$stigma_threshold %in% "High"], data$a1_q12[data$stigma_threshold %in% "Low"])
 
 # T-test for time to travel to nearest facility
-## Not significant --> p-value = 0.8238
+## Not significant --> p-value = 0.7969
 t.test(data$a1_q13[data$stigma_threshold %in% "High"], data$a1_q13[data$stigma_threshold %in% "Low"])
 
 
@@ -95,23 +99,23 @@ t.test(data$a1_q13[data$stigma_threshold %in% "High"], data$a1_q13[data$stigma_t
 # -------- Hypothesis Testing for Categorical Variables (Chisq Test) --------
 # Chisq for sociodemo, smoking (previously) and alcohol consumption factors
 # sex
-## Not significant --> p-value = 0.3379
+## Not significant --> p-value = 0.3402
 chisq.test(data$stigma_threshold, data$a1_q1)
 
 # education level
-## Not significant --> p-value = 0.2173
+## Not significant --> p-value = 0.2429
 chisq.test(data$stigma_threshold, data$abovePrimary)
 
 # smoked previously
-## Not significant --> p-value = 0.3244
+## Not significant --> p-value = 0.3265
 chisq.test(data$stigma_threshold, data$a1_q16)
 
 # alcohol consumption
-## Not significant --> p-value = 0.3905
+## Not significant --> p-value = 0.4725
 chisq.test(data$stigma_threshold, data$a1_q18)
 
 # marital status
-## Not significant --> p-value = 0.513
+## Not significant --> p-value = 0.6619
 chisq.test(data$stigma_threshold, data$a1_q4)
 
 
@@ -121,7 +125,7 @@ chisq.test(data$stigma_threshold, data$a1_q4)
 chisq.test(data$stigma_threshold, data$a1_q28___1)
 
 # cough with blood symptoms
-## Not significant --> p-value = 0.3472
+## Not significant --> p-value = 0.3462
 chisq.test(data$stigma_threshold, data$a1_q28___2)
 
 # chest pain (significant)
@@ -137,7 +141,7 @@ chisq.test(data$stigma_threshold, data$a1_q28___4)
 chisq.test(data$stigma_threshold, data$a1_q28___5)
 
 # chills
-## Not significant --> p-value = 0.136
+## Not significant --> p-value = 0.1363
 chisq.test(data$stigma_threshold, data$a1_q28___6)
 
 # weight loss (significant)
@@ -157,26 +161,26 @@ chisq.test(data$stigma_threshold, data$a1_q28___8)
 chisq.test(data$stigma_threshold, data$a1_q20___2)
 
 # hypertension
-## Not significant --> p-value = 0.8602
+## Not significant --> p-value = 0.8627
 chisq.test(data$stigma_threshold, data$a1_q20___3)
 
 # diabetes
-## Not significant --> p-value = 0.3488
+## Not significant --> p-value = 0.3475
 chisq.test(data$stigma_threshold, data$a1_q20___4)
 
 # asthma (NA since not accurate due to separation error)
 # chisq.test(data$stigma_threshold, data$a1_q20___5)
 
 # lung disease
-## Not significant --> p-value = 0.8199
+## Not significant --> p-value = 0.8191
 chisq.test(data$stigma_threshold, data$a1_q20___6)
 
 # current diagnosis of type of tb (significant)
-# significant --> p-value = 0.03122
+# significant --> p-value = 0.0434
 chisq.test(data$stigma_threshold, data$a1_type_tb)
 
 # previous diagnosis of TB 
-## Not significant --> p-value = 0.05892
+## Not significant --> p-value = 0.05858
 chisq.test(data[data$a1_q24 %in% c(1,2), ]$stigma_threshold, data[data$a1_q24 %in% c(1,2), ]$a1_q24)
 
 
@@ -190,10 +194,10 @@ chisq.test(data$stigma_threshold, data$a1_prov)
 chisq.test(data$stigma_threshold, data$a1_operat_dist)
 
 
-# -------- Linear Regresion of Stigma Scores against Significant Predictor Variables  --------
-## For each model, remove predictor variable with largest p-value until the remaining predictors are significant.
+# -------- Linear Regresion of Stigma Scores against Significant Variables  --------
+## For each model, remove variable with largest p-value until the remaining are significant.
 ## After removing variables with p-value > 0.05, we are left with cough, fever and night sweat as significant
-## predictors for stigma scores.
+## variables for stigma scores.
 
 mod1 <- lm(data$stigma_score~data$a1_q28___1+data$a1_q28___3+data$a1_q28___4+data$a1_q28___7+
              data$a1_q28___5+data$a1_q28___8+data$a1_type_tb+data$a1_prov+data$a1_operat_dist)
@@ -211,25 +215,25 @@ mod4 <- lm(data$stigma_score~data$a1_q28___1+data$a1_q28___3+ # removed a1_q28__
              data$a1_q28___5+data$a1_q28___8+data$a1_type_tb+data$a1_operat_dist)
 summary(mod4)
 
-mod5 <- lm(data$stigma_score~data$a1_q28___1+data$a1_q28___3+ # removed a1_operat_dist 
-             data$a1_q28___5+data$a1_q28___8+data$a1_type_tb)
+mod5 <- lm(data$stigma_score~data$a1_q28___1+data$a1_q28___3+ # removed a1_type_tb
+             data$a1_q28___5+data$a1_q28___8+data$a1_operat_dist)
 summary(mod5)
 
-mod6 <- lm(data$stigma_score~data$a1_q28___1+ # removed a1_q28___3 (chest pain)
-             data$a1_q28___5+data$a1_q28___8+data$a1_type_tb)
+mod6 <- lm(data$stigma_score~data$a1_q28___1+data$a1_q28___3+ # removed a1_operat_dist
+             data$a1_q28___5+data$a1_q28___8)
 summary(mod6)
 
-mod7 <- lm(data$stigma_score~data$a1_q28___1+ # removed a1_type_tb
+mod7 <- lm(data$stigma_score~data$a1_q28___1+ # removed a1_q28___3 (chest pain)
              data$a1_q28___5+data$a1_q28___8)
 summary(mod7)
 
 
 
-# -------- Logistic Regresion of Stigma Levels against Significant Predictor Variables  --------
+# -------- Logistic Regresion of Stigma Levels against Significant Variables  --------
 ## Use stigma_thresNumber outcome variable for logistic regression models.
-## For each model, remove predictor variable with largest p-value until the remaining predictors are significant.
+## For each model, remove variable with largest p-value until the remaining are significant.
 ## After removing variables with p-value > 0.05, we are left with cough, weight loss, fever, night sweat
-# and operational district as significant predictors for whether one has high or low stigma.
+# and operational district as significant variables for whether one experiences high or low stigma.
 
 m1 <- glm(data$stigma_thresNumber~data$a1_q28___1+data$a1_q28___3+data$a1_q28___4+data$a1_q28___7+
              data$a1_q28___5+data$a1_q28___8+data$a1_type_tb+data$a1_prov+data$a1_operat_dist, family='binomial')
