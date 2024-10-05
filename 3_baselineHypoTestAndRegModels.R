@@ -194,7 +194,7 @@ chisq.test(data$stigma_threshold, data$a1_prov)
 chisq.test(data$stigma_threshold, data$a1_operat_dist)
 
 
-# -------- Linear Regresion of Stigma Scores against Significant Variables  --------
+# -------- Linear Regression of Stigma Scores against Significant Variables  --------
 ## For each model, remove variable with largest p-value until the remaining are significant.
 ## After removing variables with p-value > 0.05, we are left with cough, fever and night sweat as significant
 ## variables for stigma scores.
@@ -229,7 +229,7 @@ summary(mod7)
 
 
 
-# -------- Logistic Regresion of Stigma Levels against Significant Variables  --------
+# -------- Logistic Regression of Stigma Levels against Significant Variables  --------
 ## Use stigma_thresNumber outcome variable for logistic regression models.
 ## For each model, remove variable with largest p-value until the remaining are significant.
 ## After removing variables with p-value > 0.05, we are left with cough, weight loss, fever, night sweat
