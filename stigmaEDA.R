@@ -103,14 +103,14 @@ datatb2 %>%
 datatb2_followup <- datatb2 %>%
   filter(a1_status_tb_during_fu %in% 1)
 
-## results from baseline for particiants who follow up completed
+## results from baseline for participants who completed follow-up 
 baseline_followup_complete <- datatb1[datatb1$a1_record_id %in% datatb2_followup$a1_record_id, ]
 
 summary(baseline_followup_complete$stigma_score)
 par(mfrow = c(2, 2)) # set plotting layout 2x2
 hist1 <- hist(baseline_followup_complete$stigma_score, main='Completed follow-up', xlab='Stigma Score', labels=TRUE)
 
-# filtered follow up data set for participants who did not follow up (dead/loss/refuse) to get their a1_record_id
+# filtered follow-up dataset for participants who did not follow up (dead/loss/refuse) to get their a1_record_id
 # all dnf
 datatb2_no_followup <- datatb2 %>%
   filter(a1_status_tb_during_fu %in% c(2, 3, 4))
@@ -236,13 +236,14 @@ ggplot(datatb1, aes(x = CES_D_10_threshold)) +
   theme_minimal()
 
 
-##############################################################################
-## Subgroup Analysis (Case status; Smoking status; Cough) on stigma_scores) ##
-##############################################################################
-######### Obtain subgroup datasets from datatb2 ######### 
+#############################################################################
+## Subgroup Analysis (Case status; Smoking status; Cough) on stigma_scores ##
+#############################################################################
 
-##### case status
-# create new column & copy over case_status for those who followed-up in datatb2_followup from datatb1
+########################### Obtain subgroup datasets from datatb1 and datatb2 ########################### 
+
+##############  case status (only recorded in baseline)
+# create new column & copy over "case_status" for those who followed-up in datatb2_followup from datatb1 (exclude died/lost_follow_up/other)
 datatb2_followup <- datatb2_followup %>%
   mutate(case_status_copy = datatb1$case_status[datatb1$a1_record_id %in% datatb2_followup$a1_record_id])
 # get datasets
@@ -261,32 +262,73 @@ shapiro.test(datatb1_followup_case_completed$stigma_score)
 shapiro.test(datatb1_followup_case_cured$stigma_score)
 shapiro.test(datatb2_followup_case_completed$stigma_score)
 shapiro.test(datatb2_followup_case_cured$stigma_score)
-# all not normally distributed -> wilcox test
+# result: all stigma_scores are not normally distributed -> perform wilcox test
 
-##### smoking status
-# create new column & copy over smoking_status a1_q16 for those who followed-up in datatb2_followup from datatb1
+##############  smoking status(only recorded in baseline)
+# create new column & copy over smoking_status "a1_q16" for those who followed-up in datatb2_followup from datatb1
 datatb2_followup <- datatb2_followup %>%
   mutate(smoke_status_copy = datatb1$a1_q16[datatb1$a1_record_id %in% datatb2_followup$a1_record_id])
 # get datasets
-datatb2_followup_smoke <- datatb2_followup %>%
-  filter(datatb2_followup$smoke_status_copy == "completed")
+datatb2_followup_smoker <- datatb2_followup %>%
+  filter(datatb2_followup$smoke_status_copy == 1)
+datatb2_followup_nonsmoker <- datatb2_followup %>%
+  filter(datatb2_followup$smoke_status_copy == 2)
+datatb1_followup_smoker <- datatb1 %>%
+  filter(datatb1$a1_record_id %in% datatb2_followup_smoker$a1_record_id)
+datatb1_followup_nonsmoker <- datatb1 %>%
+  filter(datatb1$a1_record_id %in% datatb2_followup_nonsmoker$a1_record_id)
 
-##### cough symptom
-# create new column & copy over cough a1_q28___1 for those who followed-up in datatb2_followup from datatb1
+# Shapiro-Wilk test to test for normality
+# baseline: p-value < 0.01 --> data is likely not normally distributed
+shapiro.test(datatb1_followup_smoker$stigma_score)
+shapiro.test(datatb1_followup_nonsmoker$stigma_score)
+shapiro.test(datatb2_followup_smoker$stigma_score)
+shapiro.test(datatb2_followup_nonsmoker$stigma_score)
+# result: all stigma_scores are not normally distributed -> perform wilcox test
+
+##############  cough symptom
+# create new column & copy over cough "a1_q28___1" for those who followed-up in datatb2_followup from datatb1
 datatb2_followup <- datatb2_followup %>%
   mutate(cough_status_copy = datatb1$a1_q28___1[datatb1$a1_record_id %in% datatb2_followup$a1_record_id])
 # get datasets
+datatb2_followup_cough <- datatb2_followup %>%
+  filter(datatb2_followup$cough_status_copy == 1)
+datatb2_followup_nocough <- datatb2_followup %>%
+  filter(datatb2_followup$cough_status_copy == 0)
+datatb1_followup_cough <- datatb1 %>%
+  filter(datatb1$a1_record_id %in% datatb2_followup_cough$a1_record_id)
+datatb1_followup_nocough <- datatb1 %>%
+  filter(datatb1$a1_record_id %in% datatb2_followup_nocough$a1_record_id)
 
+# Shapiro-Wilk test to test for normality
+# baseline: p-value < 0.01 --> data is likely not normally distributed
+shapiro.test(datatb1_followup_cough$stigma_score)
+shapiro.test(datatb1_followup_nocough$stigma_score)
+shapiro.test(datatb2_followup_cough$stigma_score)
+shapiro.test(datatb2_followup_nocough$stigma_score)
+# result: all stigma_scores are not normally distributed -> perform wilcox test
 
-######### Tests ######### 
-##### case status
+####################################  Statistical Tests ####################################   
+##############  case status
 wilcox.test(datatb1_followup_case_completed$stigma_score, datatb2_followup_case_completed$stigma_score) #p-val < 0.01
 wilcox.test(datatb1_followup_case_cured$stigma_score, datatb2_followup_case_cured$stigma_score) #p-val < 0.01
-summary(datatb1_followup_case_completed$stigma_score) #mean 15
+summary(datatb1_followup_case_completed$stigma_score) #mean=15
 summary(datatb2_followup_case_completed$stigma_score) #mean=12.63
 summary(datatb1_followup_case_cured$stigma_score) #mean=16.11
 summary(datatb2_followup_case_cured$stigma_score) #mean=14.36
 
-##### smoking status
+##############  smoking status
+wilcox.test(datatb1_followup_smoker$stigma_score, datatb2_followup_smoker$stigma_score) #p-val < 0.01
+wilcox.test(datatb1_followup_nonsmoker$stigma_score, datatb2_followup_nonsmoker$stigma_score) #p-val < 0.01
+summary(datatb1_followup_smoker$stigma_score) #mean=15.84
+summary(datatb2_followup_smoker$stigma_score) #mean=13.27
+summary(datatb1_followup_nonsmoker$stigma_score) #mean=15.01
+summary(datatb2_followup_nonsmoker$stigma_score) #mean=13.16
 
-##### cough symptom
+##############  cough symptom
+wilcox.test(datatb1_followup_cough$stigma_score, datatb2_followup_cough$stigma_score) #p-val < 0.01
+wilcox.test(datatb1_followup_nocough$stigma_score, datatb2_followup_nocough$stigma_score) #p-val < 0.01
+summary(datatb1_followup_cough$stigma_score) #mean=15.81
+summary(datatb2_followup_cough$stigma_score) #mean=13.86
+summary(datatb1_followup_nocough$stigma_score) #mean=14.04
+summary(datatb2_followup_nocough$stigma_score) #mean=11.23
