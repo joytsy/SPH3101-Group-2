@@ -4,15 +4,14 @@
 # Tests used for hypothesis testing include t-test and wilcoxon for continuous variables,
 # while chi-square test for categorical variables.
 # Regression Models were also fitted with statistically significant variables (after conducting hypo testing)
-# and we slowly reduced the number of predictors in the models until all variables had a p-value of <0.05.
-# Additional things to try: ANOVA?
-# Initial factors we thought would be significant in determining stigma levels: age, sex, education level, smoking, alchohol, income
-# After conducting hypothesis testing, signficant factors were: several tb symptoms experienced (cough, chest pain, dyspnea, weight loss, fever, night sweat),
-# current diagnosis of tb type, province and operational districts.
-# After running linear regression on the significant factors, we are left with cough, fever and night sweat as
-# significant predictor variables for stigma scores.
+# and we slowly reduced the number of variables in the models until model could no longer improve and remaining variables are significant.
+# Initial factors we thought would be significant in determining stigma levels: age, sex, education level, smoking, alcohol, income
+# After conducting hypothesis testing, significant factors were: several tb symptoms experienced (cough, chest pain, dyspnea, weight loss, fever, night sweat),
+# current diagnosis of TB type, province and operational districts.
+# After running linear regression on the significant factors, we are left with cough, chest pain, fever, night sweat, current diagnosis 
+# of TB type and operational district as variables for stigma scores.
 # Whereas for logistic regression, we are left with cough, weight loss, fever, night sweat
-# and operational district as significant predictor variables for whether one has a high or low stigma score.
+# and operational district as significant variables for whether one has a high or low stigma score.
 
 
 # Run 'load_data.r' script to load datatb1 dataset, else can run the following line
@@ -194,43 +193,48 @@ chisq.test(data$stigma_threshold, data$a1_operat_dist)
 
 
 # -------- Linear Regression of Stigma Scores against Significant Variables  --------
-## For each model, remove variable with largest p-value until the remaining are significant.
-## After removing variables with p-value > 0.05, we are left with cough, fever and night sweat as significant
-## variables for stigma scores.
+## Employ backward stepwise regression function to remove least statistically significant variables until model no longer improves.
+## After removing variables with p-value > 0.05, we are left with cough, chest pain, fever, night sweat, current diagnosis 
+## of TB type and operational district as significant variables for stigma scores.
 
+# Implement backward stepwise regression using step() to obtain best fit of model based on data
+linearRegMod <- lm(data$stigma_score~data$a1_q28___1+data$a1_q28___3+data$a1_q28___4+data$a1_q28___7+
+                     data$a1_q28___5+data$a1_q28___8+data$a1_type_tb+data$a1_prov+data$a1_operat_dist)
+linearRegMod_back <- step(linearRegMod, direction = "backward", scope = formula(~ .)) # FINAL MODEL: a1_q28___1 (cough), a1_q28___3 (chest pain), a1_q28___5 (fever), a1_q28___8 (night sweat), a1_type_tb and a1_operat_dist
+
+# Manually implement all models evaluated in backward stepwise regression and obtain AIC values
 mod1 <- lm(data$stigma_score~data$a1_q28___1+data$a1_q28___3+data$a1_q28___4+data$a1_q28___7+
              data$a1_q28___5+data$a1_q28___8+data$a1_type_tb+data$a1_prov+data$a1_operat_dist)
 summary(mod1)
+AIC(mod1) # AIC = 4794.795
 
-mod2 <- lm(data$stigma_score~data$a1_q28___1+data$a1_q28___3+data$a1_q28___4+ # removed a1_q28___7 (weight loss)
-             data$a1_q28___5+data$a1_q28___8+data$a1_type_tb+data$a1_prov+data$a1_operat_dist)
+mod2 <- lm(data$stigma_score ~ data$a1_q28___1 + data$a1_q28___3 + data$a1_q28___4 + # removed a1_q28___7 (weight loss)
+             data$a1_q28___5 + data$a1_q28___8 + data$a1_type_tb + data$a1_prov + 
+             data$a1_operat_dist)
 summary(mod2)
+AIC(mod2) # AIC = 4793.769
 
-mod3 <- lm(data$stigma_score~data$a1_q28___1+data$a1_q28___3+data$a1_q28___4+ # removed a1_prov 
-             data$a1_q28___5+data$a1_q28___8+data$a1_type_tb+data$a1_operat_dist)
+mod3 <- lm(data$stigma_score ~ data$a1_q28___1 + data$a1_q28___3 + data$a1_q28___4 + # removed a1_prov
+             data$a1_q28___5 + data$a1_q28___8 + data$a1_type_tb + data$a1_operat_dist)
 summary(mod3)
+AIC(mod3) # AIC = 4793.246
 
-mod4 <- lm(data$stigma_score~data$a1_q28___1+data$a1_q28___3+ # removed a1_q28___4 (dyspnea)
-             data$a1_q28___5+data$a1_q28___8+data$a1_type_tb+data$a1_operat_dist)
-summary(mod4)
+mod4 <- lm(data$stigma_score ~ data$a1_q28___1 + data$a1_q28___3 + data$a1_q28___5 + # removed a1_q28___4 (dyspnea)
+             data$a1_q28___8 + data$a1_type_tb + data$a1_operat_dist)
+summary(mod4) # FINAL MODEL
+AIC(mod4) # AIC = 4792.842
 
-mod5 <- lm(data$stigma_score~data$a1_q28___1+data$a1_q28___3+ # removed a1_type_tb
-             data$a1_q28___5+data$a1_q28___8+data$a1_operat_dist)
+# Compare final model's AIC with mod5 (removed next variable with largest p-value and >0.05)
+mod5 <- lm(data$stigma_score ~ data$a1_q28___1 + data$a1_q28___3 + # removed a1_type_tb since p-value 0.101246 largest in final model
+               data$a1_q28___5 + data$a1_q28___8 + data$a1_operat_dist)
 summary(mod5)
-
-mod6 <- lm(data$stigma_score~data$a1_q28___1+data$a1_q28___3+ # removed a1_operat_dist
-             data$a1_q28___5+data$a1_q28___8)
-summary(mod6)
-
-mod7 <- lm(data$stigma_score~data$a1_q28___1+ # removed a1_q28___3 (chest pain)
-             data$a1_q28___5+data$a1_q28___8)
-summary(mod7)
-
+AIC(mod5) # AIC = 4793.552 --> increased from before, indicating that previous model was a better fit with given data
 
 
 # -------- Logistic Regression of Stigma Levels against Significant Variables  --------
 ## Use stigma_thresNumber outcome variable for logistic regression models.
-## For each model, remove variable with largest p-value until the remaining are significant.
+## For each model, remove variable with largest p-value and check for drop in deviance until the model no longer improve and 
+## remaining variables are significant.
 ## After removing variables with p-value > 0.05, we are left with cough, weight loss, fever, night sweat
 # and operational district as significant variables for whether one experiences high or low stigma.
 
