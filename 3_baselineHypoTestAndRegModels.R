@@ -24,6 +24,7 @@ load('data/datatb1.rdata')
 library(ggplot2)
 library(dplyr)
 library(haven)
+library(stats) # to obtain AIC values of linear reg models
 
 
 # -------- Data Processing and Manipulation --------
