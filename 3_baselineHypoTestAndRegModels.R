@@ -27,7 +27,6 @@ library(dplyr)
 library(haven)
 
 
-
 # -------- Data Processing and Manipulation --------
 data <- datatb1 # created new df 'data' to modify on
 
@@ -242,16 +241,28 @@ summary(m1)
 m2 <- glm(data$stigma_thresNumber~data$a1_q28___1+data$a1_q28___3+data$a1_q28___4+data$a1_q28___7+ # removed a1_type_tb
             data$a1_q28___5+data$a1_q28___8+data$a1_prov+data$a1_operat_dist, family='binomial')
 summary(m2)
+anova(m1, m2, test = 'Chisq') # Deviance: -0.0066762, p-value of test-statistic: 0.9349
 
 m3 <- glm(data$stigma_thresNumber~data$a1_q28___1+data$a1_q28___3+data$a1_q28___4+data$a1_q28___7+ # removed a1_prov
             data$a1_q28___5+data$a1_q28___8+data$a1_operat_dist, family='binomial')
 summary(m3)
+anova(m2, m3, test = 'Chisq') # Deviance: -0.14323, p-value of test-statistic: 0.7051
 
 m4 <- glm(data$stigma_thresNumber~data$a1_q28___1+data$a1_q28___4+data$a1_q28___7+ # removed a1_q28___3 (chest pain)
             data$a1_q28___5+data$a1_q28___8+data$a1_operat_dist, family='binomial')
 summary(m4)
+anova(m3, m4, test = 'Chisq') # Deviance: -0.55869, p-value of test-statistic: 0.4548
+
 
 m5 <- glm(data$stigma_thresNumber~data$a1_q28___1+data$a1_q28___7+ # removed a1_q28___4 (dyspnea)
             data$a1_q28___5+data$a1_q28___8+data$a1_operat_dist, family='binomial')
 summary(m5)
+anova(m4, m5, test = 'Chisq') # This will be the final model - Deviance: -2.8477, p-value of test-statistic: 0.0915 (Below 0.1, above 0.05)
+
+m6 <- glm(data$stigma_thresNumber~data$a1_q28___1+ #data$a1_q28___7 (+ # removed a1_q28___4 (dyspnea)
+            data$a1_q28___5+data$a1_q28___8+data$a1_operat_dist, family='binomial')
+summary(m6)
+anova(m5, m6, test = 'Chisq') # SIGNIFICANT DIFFERENCE- Deviance: -4.5975, p-value of test-statistic: 0.03202 (p-value < 0.05)
+
+
 
