@@ -150,7 +150,7 @@ boxplot(phnom_baseline$stigma_score, phnom_followup$stigma_score, names = c("Bas
 
 
 ##################################################################
-## Subgroup Analysis on stigma_scores for Age Groups over time) ##
+## Subgroup Analysis on stigma_scores for Age Groups over time  ##
 ##################################################################
 
 ## ---------- Data Preprocessing for Age Groups ----------
@@ -377,3 +377,97 @@ shapiro.test(followup_65AndAbove$stigma_score)
 wilcox.test(baseline_65AndAbove$stigma_score, followup_65AndAbove$stigma_score, paired=TRUE)
 boxplot(baseline_65AndAbove$stigma_score, followup_65AndAbove$stigma_score, names = c("Baseline", "Follow up"),
         main = "Boxplot of Stigma Scores of Subgroup in Age Group 65+")
+
+
+#########################################################################
+## Subgroup Analysis on stigma_scores for <55 and >=55 y.o. over time) ##
+#########################################################################
+
+## ---------- Data Preprocessing for Age Groups ----------
+# Based on Cambodia's definition of older population,
+# split 621 individuals into following age groups: < 55 and >= 55
+baseline_followup_complete_oldYoung <- baseline_followup_complete %>% 
+  mutate(older = case_when(
+    a1_q3 >= 55 ~ "Yes",  # Categorize as Yes if individual is 55 and above
+    a1_q3 < 55 ~ "No",  # Categorize as No if individual is below 55
+    ),
+    .after = a1_q3
+  )
+
+# get count of each age group
+# older count
+# <chr> <int>
+# 1 No      212
+# 2 Yes     409
+baseline_followup_complete_oldYoung %>% 
+  group_by(older) %>% 
+  summarise(count=n())
+
+## --------- Overall Visualisation in Baseline of the 2 groups ---------
+boxplot(baseline_followup_complete_oldYoung$stigma_score[baseline_followup_complete_oldYoung$older=="No"], 
+        baseline_followup_complete_oldYoung$stigma_score[baseline_followup_complete_oldYoung$older=="Yes"],
+        names=c("Younger than 55", "55 and above"),
+        main="Boxplot of Stigma Scores of Age Groups at Baseline")
+
+## ---------------- Ages <55 ----------------
+# get dataset
+baseline_below55 <- baseline_followup_complete_oldYoung[baseline_followup_complete_oldYoung$older=="No",]
+
+followup_below55 <- datatb2_followup[datatb2_followup$a1_record_id %in% baseline_below55$a1_record_id, ]
+
+# summary
+summary(baseline_below55$stigma_score)
+summary(followup_below55$stigma_score)
+
+## Visualise distributions
+# Visualize distributions of stigma_score at baseline 
+ggplot(baseline_below55, aes(x = stigma_score)) + 
+  geom_histogram(bins = 10, fill = "blue", color = "black") +
+  labs(title = "Distribution of Stigma Scores - Ages Below 55 (Baseline)", x = "Stigma Score", y = "Frequency")
+
+# Visualize distributions of stigma_score at follow up
+ggplot(followup_below55, aes(x = stigma_score)) + 
+  geom_histogram(bins = 10, fill = "blue", color = "black") +
+  labs(title = "Distribution of Stigma Scores - Ages Below 55 (Follow-Up)", x = "Stigma Score", y = "Frequency")
+
+
+# Shapiro-Wilk test to test for normality in both baseline and follow up
+shapiro.test(baseline_below55$stigma_score)
+shapiro.test(followup_below55$stigma_score)
+
+# Since stigma scores likely not normally distributed, use wilcox to compare the sample
+wilcox.test(baseline_below55$stigma_score, followup_below55$stigma_score, paired=TRUE)
+boxplot(baseline_below55$stigma_score, followup_below55$stigma_score, names = c("Baseline", "Follow up"),
+        main = "Boxplot of Stigma Scores of Subgroup in Age Group Below 55")
+
+
+## ---------------- Ages >=55 ----------------
+# get dataset
+baseline_55AndAbove <- baseline_followup_complete_oldYoung[baseline_followup_complete_oldYoung$older=="Yes",]
+
+followup_55AndAbove <- datatb2_followup[datatb2_followup$a1_record_id %in% baseline_55AndAbove$a1_record_id, ]
+
+# summary
+summary(baseline_55AndAbove$stigma_score)
+summary(followup_55AndAbove$stigma_score)
+
+## Visualise distributions
+# Visualize distributions of stigma_score at baseline 
+ggplot(baseline_55AndAbove, aes(x = stigma_score)) + 
+  geom_histogram(bins = 10, fill = "blue", color = "black") +
+  labs(title = "Distribution of Stigma Scores - Ages 55 and Above (Baseline)", x = "Stigma Score", y = "Frequency")
+
+# Visualize distributions of stigma_score at follow up
+ggplot(followup_55AndAbove, aes(x = stigma_score)) + 
+  geom_histogram(bins = 10, fill = "blue", color = "black") +
+  labs(title = "Distribution of Stigma Scores - Ages 55 and Above (Follow-Up)", x = "Stigma Score", y = "Frequency")
+
+
+# Shapiro-Wilk test to test for normality in both baseline and follow up
+shapiro.test(baseline_55AndAbove$stigma_score)
+shapiro.test(followup_55AndAbove$stigma_score)
+
+# Since stigma scores likely not normally distributed, use wilcox to compare the sample
+wilcox.test(baseline_55AndAbove$stigma_score, followup_55AndAbove$stigma_score, paired=TRUE)
+boxplot(baseline_55AndAbove$stigma_score, followup_55AndAbove$stigma_score, names = c("Baseline", "Follow up"),
+        main = "Boxplot of Stigma Scores of Subgroup in Age Group 55 and Above")
