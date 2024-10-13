@@ -302,3 +302,69 @@ boxplot(datatb1_followup_TBbacPlus$stigma_score,datatb2_followup_TBbacPlus$stigm
         main = "Boxplot of Stigma Scores of TB Bac- Cohort at Baseline and Follow-Up")
 boxplot(datatb1_followup_TBbacMinus$stigma_score,datatb2_followup_TBbacMinus$stigma_score, names = c("Baseline", "Follow-up"),
         main = "Boxplot of Stigma Scores of TB Bac- Cohort at Baseline and Follow-Up")
+
+
+
+
+
+
+########################################### Final plots:
+# Set up plotting area for two boxplots side by side
+par(mfrow = c(1, 2))  # 1 row, 2 columns layout
+
+# Boxplot for TB Bac+ cohort
+boxplot(datatb1_followup_chestpain$stigma_score, datatb2_followup_chestpain$stigma_score,
+        main = "TB Bac+ Cohort", xlab = "Baseline",
+        ylab = "Stigma Score", col = c("lightblue", "lightgreen"))
+
+# Boxplot for TB Bac- cohort
+boxplot(datatb1_followup_nochestpain$stigma_score, datatb2_followup_nochestpain$stigma_score,
+        main = "TB Bac- Cohort", xlab = "Baseline",
+        ylab = "Stigma Score", col = c("lightblue", "lightgreen"))
+
+# Reset plotting layout
+par(mfrow = c(1, 1))
+# -----------------------------------------------------------------
+# Set up plotting area for two boxplots side by side
+par(mfrow = c(1, 2))  # 1 row, 2 columns layout
+
+# Boxplot for TB Bac+ cohort
+boxplot(datatb1_followup_TBbacPlus$stigma_score, datatb2_followup_TBbacPlus$stigma_score,
+        main = "TB Bac+ Cohort", xlab = "Baseline",
+        ylab = "Stigma Score", col = c("lightblue", "lightgreen"))
+
+# Boxplot for TB Bac- cohort
+boxplot(datatb1_followup_TBbacMinus$stigma_score, datatb2_followup_TBbacMinus$stigma_score,
+        main = "TB Bac- Cohort", xlab = "Baseline",
+        ylab = "Stigma Score", col = c("lightblue", "lightgreen"))
+
+# Reset plotting layout
+par(mfrow = c(1, 1))
+
+
+
+
+
+############ Violin Plot
+
+library(ggplot2)
+library(reshape2)# for melting data if needed
+library(gridExtra)
+
+# Create a violin plot for TB Bac+ cohort
+p1 <- ggplot() +
+  geom_violin(data = datatb1_long, aes(x = "Baseline", y = datatb1_followup_chestpain$stigma_score, fill = "lightblue"), trim = FALSE,show.legend = FALSE) +
+  geom_violin(data = datatb2_long, aes(x = "Follow-up", y = datatb2_followup_chestpain$stigma_score, fill = "lightgreen"), trim = FALSE,show.legend = FALSE) +
+  labs(title = "TB Bac+ Cohort", y = "Stigma Score") +
+  theme_minimal() 
+
+
+# Create a similar violin plot for TB Bac- cohort
+p2 <- ggplot() +
+  geom_violin(data = datatb1_nochestpain_long, aes(x = "Baseline", y = datatb1_followup_nochestpain$stigma_score, fill = "lightblue"), trim = FALSE,show.legend = FALSE) +
+  geom_violin(data = datatb2_nochestpain_long, aes(x = "Follow-up", y = datatb2_followup_nochestpain$stigma_score, fill = "lightgreen"), trim = FALSE,show.legend = FALSE) +
+  labs(title = "TB Bac- Cohort", y = "Stigma Score") +
+  theme_minimal() 
+
+# Plot the two violin plots side by side using gridExtra
+grid.arrange(p1, p2, nrow = 1)
