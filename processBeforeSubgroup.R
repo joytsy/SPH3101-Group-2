@@ -1,6 +1,6 @@
 # Run 'load_data.r' script to load datatb1 dataset, else can run the following line
-# load('data/datatb1.rdata')
-# load('data/datatb2.rdata')
+load('data/datatb1.rdata')
+load('data/datatb2.rdata')
 
 # -------- Load Libraries --------
 # Load package ggplot2 and dplyr(to be used for data manipulation and data visualisation)
