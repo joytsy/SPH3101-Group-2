@@ -1,92 +1,56 @@
-# ++++++++ Stigma EDA ++++++++ 
+################
+#  Stigma EDA  # 
+################
 
-# Run 'load_data.r' script to load datatb1 dataset, else can run the following line
-# load('data/datatb1.rdata')
-# load('data/datatb2.rdata')
+# Load Datasets, Run data-processing function
+source('load_data.r')
+source('MyFunctions.R')
 
-# -------- Load Libraries --------
-# Load package ggplot2 and dplyr(to be used for data manipulation and data visualisation)
-library(ggplot2)
-library(dplyr)
-library(haven)
-
-data <- datatb1
-
-#################################################
-## Data Processing and Manipulation (Baseline) ##
-#################################################
-# remove observations where individuals < 18 yo
-datatb1 <- datatb1 %>% 
-  filter(a1_q3>=18)
-
-### Create additional "stigma_score" column using sum a1_q30 to a1_q41, note: max stigma_score is 12*4=48 with 48 being greater stigma experience
-datatb1 <- datatb1 %>%
-  mutate(stigma_score = rowSums(across(a1_q30:a1_q41)))
+###################################
+## Data Visualisation (Baseline) ##
+###################################
+datatb1 <- process_datatb1_function(datatb1)
 
 # statistical summary of crude sigma_score
 summary(datatb1$stigma_score)
 
-# Categorize stigma_score using mean (use baseline mean of 15.4)
-threshold <- 15.4 # mean of baseline stigma_scores
-datatb1 <- datatb1 %>%
-  mutate(
-    stigma_threshold = case_when(
-      stigma_score > threshold ~ "High",  # Categorize as High if stigma_score > 15.4
-      stigma_score <= threshold ~ "Low",  # Categorize as Low if stigma_score <= 15.4
-      TRUE ~ NA_character_  # Handle any unexpected cases
-    )
-  )
-
 # Visualize distributions of stigma_score at baseline
 ggplot(datatb1, aes(x = stigma_score)) + 
-  geom_histogram(bins = 30, fill = "blue", color = "black") +
-  labs(title = "Distribution of Stigma Scores (Baseline)", x = "Stigma Score", y = "Frequency")
+  geom_histogram(bins = 30, fill = "#FDE8E0", color = "black") +
+  labs(title = "Distribution of Stigma Scores (Baseline)", x = "Stigma Score", y = "Frequency")+
+  theme_minimal()
 
 # Visualize distributions of stigma_threshold at baseline using bar plot
 ggplot(datatb1, aes(x = stigma_threshold)) + 
-  geom_bar(fill = "blue", color = "black") +
+  geom_bar(fill = "#FDE8E0", color = "black") +
   labs(title = "Distribution of Stigma Scores (Baseline)", x = "Stigma Threshold", y = "Frequency") +
   theme_minimal()
 
-
-##################################################
-## Data Processing and Manipulation (Follow up) ##
-##################################################
-# remove observations where individuals < 18 yo
-datatb2 <- datatb2 %>%
-  filter(a1_record_id %in% datatb1$a1_record_id)
-
-datatb2 <- datatb2 %>%
-  mutate(stigma_score = rowSums(across(a1_q7_fu:a1_q18_fu)))
+####################################
+## Data Visualisation (Follow up) ##
+####################################
+datatb2 <- process_datatb2_function(datatb2)
 
 summary(datatb2$stigma_score)
 
-# Categorize stigma_score using mean (use baseline mean of 15.4)
-datatb2 <- datatb2 %>%
-  mutate(
-    stigma_threshold = case_when(
-      stigma_score > threshold ~ "High",  # Categorize as High if stigma_score > 15.4
-      stigma_score <= threshold ~ "Low",  # Categorize as Low if stigma_score <= 15.4
-      TRUE ~ NA_character_  # Handle any unexpected cases
-    )
-  )
-
 # Visualize distributions of stigma scores at follow up
 ggplot(datatb2, aes(x = stigma_score)) + 
-  geom_histogram(bins = 30, fill = "blue", color = "black") +
-  labs(title = "Distribution of Stigma Scores (Follow-Up)", x = "Stigma Score", y = "Frequency")
+  geom_histogram(bins = 40, fill = "#FDE8E0", color = "black") +
+  labs(title = "Distribution of Stigma Scores (Follow-Up)", x = "Stigma Score", y = "Frequency")+
+  theme_minimal()
 
 # Visualize distributions of stigma_threshold at follow up using bar plot
 ggplot(datatb2, aes(x = stigma_threshold)) + 
-  geom_bar(fill = "blue", color = "black") +
+  geom_bar(fill = "#FDE8E0", color = "black") +
   labs(title = "Distribution of Stigma Scores (Follow-Up)", x = "Stigma Threshold", y = "Frequency") +
   theme_minimal()
 
-# -------- Data Processing and Manipulation --------
+###################################################################
+## Exploring stigma_scores for different follow-up status groups ##
+###################################################################
 # Convert the labelled variable for status during follow-up to numeric
 datatb2 <- datatb2 %>%
   mutate(a1_status_tb_during_fu = as.numeric(a1_status_tb_during_fu))
-
 # Brief summary of count of reasons for individuals who did not follow up 
 datatb2 %>% 
   mutate(a1_status_tb_during_fu = recode(a1_status_tb_during_fu,
@@ -144,12 +108,12 @@ hist4 <- hist(baseline_loss_followup$stigma_score, main='Loss to follow-up', xla
 
 # Visualize distributions of stigma_score at baseline for the 621 individuals who followed up
 ggplot(baseline_followup_complete, aes(x = stigma_score)) + 
-  geom_histogram(bins = 30, fill = "blue", color = "black") +
+  geom_histogram(bins = 30, fill = "#FDE8E0", color = "black") +
   labs(title = "Distribution of Stigma Scores (Baseline)", x = "Stigma Score", y = "Frequency")
 
 # Visualize distributions of stigma_score at follow up for the 621 individuals who followed up
 ggplot(datatb2_followup, aes(x = stigma_score)) + 
-  geom_histogram(bins = 30, fill = "blue", color = "black") +
+  geom_histogram(bins = 30, fill = "#FDE8E0", color = "black") +
   labs(title = "Distribution of Stigma Scores (Follow-Up)", x = "Stigma Score", y = "Frequency")
 
 
@@ -166,8 +130,6 @@ boxplot(datatb1$stigma_score[!is.na(datatb2$stigma_score)],datatb2$stigma_score[
 
 hist(datatb1$stigma_score)
 hist(datatb2$stigma_score)
-
-
 
 ####################################################
 ##  EDA Section 3.1 Stigma Experiences (Baseline) ##
@@ -200,7 +162,6 @@ table(datatb1$a1_q40)
 table(datatb1$a1_q41)
 
 
-
 ##############################################################################################
 ##  EDA Section 3.2 Center for Epidemiology Studies Depression Scale (CES-D-10): (Baseline) ##
 ##############################################################################################
@@ -226,11 +187,12 @@ datatb1 <- datatb1 %>%
 
 # Visualize distributions of CES_D_10 at baseline
 ggplot(datatb1, aes(x = CES_D_10)) + 
-  geom_histogram(bins = 30, fill = "blue", color = "black") +
-  labs(title = "Distribution of CES_D_10", x = "CES_D_10", y = "Frequency")
+  geom_histogram(bins = 30, fill = "#FDE8E0", color = "black") +
+  labs(title = "Distribution of CES_D_10", x = "CES_D_10", y = "Frequency")+
+  theme_minimal()
 
 # Visualize distributions of CES_D_10_threshold at baseline using bar plot
 ggplot(datatb1, aes(x = CES_D_10_threshold)) + 
-  geom_bar(fill = "grey", color = "black") +
+  geom_bar(fill = "#FDE8E0", color = "black") +
   labs(title = "Distribution of CES_D_10", x = "CES_D_10 Threshold", y = "Frequency") +
   theme_minimal()

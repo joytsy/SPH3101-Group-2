@@ -1,57 +1,20 @@
-# ++++++++ Stigma EDA ++++++++ 
+#####################################################################
+# Subgroup Analysis: Case status, Cough, Smoke, TB type, Chestpain  # 
+#####################################################################
 
-# Run 'load_data.r' script to load datatb1 dataset, else can run the following line
-# load('data/datatb1.rdata')
-# load('data/datatb2.rdata')
-
-# -------- Load Libraries --------
-# Load package ggplot2 and dplyr(to be used for data manipulation and data visualisation)
-library(ggplot2)
-library(dplyr)
-library(haven)
+# Load Datasets, Run data-processing functionsource('load_data.r')
+source('MyFunctions.R')
+source('MyFunctions.R')
 
 #################################################
 ## Data Processing and Manipulation (Baseline) ##
 #################################################
-# remove observations where individuals < 18 yo
-datatb1 <- datatb1 %>% 
-  filter(a1_q3>=18)
-
-### Create additional "stigma_score" column using sum a1_q30 to a1_q41, note: max stigma_score is 12*4=48 with 48 being greater stigma experience
-datatb1 <- datatb1 %>%
-  mutate(stigma_score = rowSums(across(a1_q30:a1_q41)))
-
-# Categorize stigma_score using mean (use baseline mean of 15.4)
-threshold <- 15.4 # mean of baseline stigma_scores
-datatb1 <- datatb1 %>%
-  mutate(
-    stigma_threshold = case_when(
-      stigma_score > threshold ~ "High",  # Categorize as High if stigma_score > 15.4
-      stigma_score <= threshold ~ "Low",  # Categorize as Low if stigma_score <= 15.4
-      TRUE ~ NA_character_  # Handle any unexpected cases
-    )
-  )
+datatb1 <- process_datatb1_function(datatb1)
 
 ##################################################
 ## Data Processing and Manipulation (Follow up) ##
 ##################################################
-# remove observations where individuals < 18 yo
-datatb2 <- datatb2 %>%
-  filter(a1_record_id %in% datatb1$a1_record_id)
-
-datatb2 <- datatb2 %>%
-  mutate(stigma_score = rowSums(across(a1_q7_fu:a1_q18_fu)))
-
-# Categorize stigma_score using mean (use baseline mean of 15.4)
-datatb2 <- datatb2 %>%
-  mutate(
-    stigma_threshold = case_when(
-      stigma_score > threshold ~ "High",  # Categorize as High if stigma_score > 15.4
-      stigma_score <= threshold ~ "Low",  # Categorize as Low if stigma_score <= 15.4
-      TRUE ~ NA_character_  # Handle any unexpected cases
-    )
-  )
-
+datatb2 <- process_datatb2_function(datatb2)
 
 # -------- Data Processing and Manipulation --------
 # Convert the labelled variable for status during follow-up to numeric
@@ -70,6 +33,9 @@ datatb2 %>%
     count=n()
   )
 
+##############################################
+## Preparing datasets for subgroup analysis ##
+##############################################
 # filtered follow up data set for participants who completed followed up
 datatb2_followup <- datatb2 %>%
   filter(a1_status_tb_during_fu %in% 1)
@@ -108,7 +74,7 @@ boxplot(datatb1$stigma_score[!is.na(datatb2$stigma_score)],datatb2$stigma_score[
 ## Subgroup Analysis (Case status; Smoking status; Cough) on stigma_scores ##
 #############################################################################
 
-########################### Obtain subgroup datasets from datatb1 and datatb2 ########################### 
+############## Obtain subgroup datasets from datatb1 and datatb2 above ###########################
 
 ##############  case status (only recorded in baseline)
 # create new column & copy over "case_status" for those who followed-up in datatb2_followup from datatb1 (exclude died/lost_follow_up/other)
@@ -214,11 +180,6 @@ boxplot(datatb1_followup_nocough$stigma_score,datatb2_followup_nocough$stigma_sc
         main = "Boxplot of Stigma Scores of No cough Cohort at Baseline and Follow-Up")
 
 
-
-
-
-
-
 ##############################################################
 ## Subgroup Analysis (TB type, chest pain) on stigma_scores ##
 ##############################################################
@@ -302,9 +263,6 @@ boxplot(datatb1_followup_TBbacPlus$stigma_score,datatb2_followup_TBbacPlus$stigm
         main = "Boxplot of Stigma Scores of TB Bac- Cohort at Baseline and Follow-Up")
 boxplot(datatb1_followup_TBbacMinus$stigma_score,datatb2_followup_TBbacMinus$stigma_score, names = c("Baseline", "Follow-up"),
         main = "Boxplot of Stigma Scores of TB Bac- Cohort at Baseline and Follow-Up")
-
-
-
 
 
 
