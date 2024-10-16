@@ -1,7 +1,6 @@
-################################################
-# Subgroup Analysis Violin Plot Visualisations # 
-################################################
-
+#############################################################
+# Subgroup Analysis Violin Plot Visualisations for 2 levels # 
+#############################################################
 
 # Run subgroup scripts before running plotViolin function to obtain finalised subgroup data for visualisations
 source('processBeforeSubgroup.R')
@@ -12,20 +11,20 @@ source('subgroupCaseCoughSmokeTbtypeChestpain.R')
 # Load grid library
 library(grid)
 
-#######################
-# plotViolin function #
-#######################
+########################################################
+# plotViolin function for subgroups with only 2 levels #
+########################################################
 
-# plotViolin function for subgroups with only 2 levels
 # Arguments: data takes in a list of dataframes i.e. data = list(baseline_below55, followup_below55, baseline_55AndAbove, followup_55AndAbove)
 # textLabels takes in the x-axis labels of the levels i.e. textLabels=c("Below 55", "55 and Above")
 # title takes in text to add after "Distribution of Stigma Scores across" for the title of the overall plot i.e. title="Age Group"
 # example of code usage: plotViolin(data=list(baseline_below55, followup_below55, baseline_55AndAbove, followup_55AndAbove), 
 #                                   textLabels=c("Below 55", "55 and Above"), title="Age Groups")
 plotViolin <- function(data, textLabels, title) {
-  COLS = c('#faab5c','#bf3414', '#faab5c','#bf3414')
   
   xlevels= lapply(data, function(df) df$stigma_score)
+  
+  COLS = rep(c('#faab5c','#bf3414'), length(xlevels)/2)
   
   BOXPLOT_DATA = list()  
   VIOLIN_DATA = list()  
@@ -115,36 +114,36 @@ plotViolin <- function(data, textLabels, title) {
   }
 }
 
-
 #################################################
 # Subgroup Analysis Visualisations for 2 levels #
 #################################################
-# # Age group
-# plotViolin(data=list(baseline_below55, followup_below55, 
-#                      baseline_55AndAbove, followup_55AndAbove),
-#            textLabels=c("Below 55", "55 and Above"), title="Age Groups")
-# 
-# # Case Status (Completed and Cured)
-# plotViolin(data=list(datatb1_followup_case_completed, datatb2_followup_case_completed,
-#                      datatb1_followup_case_cured, datatb2_followup_case_cured),
-#            textLabels=c("Completed", "Cured"), title="Case Statuses")
-# 
-# # Smoking Status 
-# plotViolin(data=list(datatb1_followup_nonsmoker, datatb2_followup_nonsmoker,
-#                      datatb1_followup_smoker, datatb2_followup_smoker),
-#            textLabels=c("Non-Smoker", "Smoker"), title="Smoking Status")
-# 
-# # Cough
-# plotViolin(data=list(datatb1_followup_nocough, datatb2_followup_nocough,
-#                datatb1_followup_cough, datatb2_followup_cough),
-#      textLabels=c("No Cough", "Cough"), title="Presence of Cough")
-# 
-# # Fever
-# plotViolin(data=list(no_fever_baseline, no_fever_followup,
-#                      fever_baseline, fever_followup),
-#            textLabels=c("No Fever", "Fever"), title="Presence of Fever")
-# 
-# # Night Sweat
-# plotViolin(data=list(no_night_sweat_baseline, no_night_sweat_followup,
-#                      night_sweat_baseline, night_sweat_followup),
-#            textLabels=c("No Night Sweat", "Night Sweat"), title="Presence of Night Sweat")
+# Age group
+plotViolin(data=list(baseline_below55, followup_below55,
+                     baseline_55AndAbove, followup_55AndAbove),
+           textLabels=c("Below 55", "55 and Above"), title="Age Groups")
+
+# Case Status (Completed and Cured)
+plotViolin(data=list(datatb1_followup_case_completed, datatb2_followup_case_completed,
+                     datatb1_followup_case_cured, datatb2_followup_case_cured),
+           textLabels=c("Completed", "Cured"), title="Case Statuses")
+
+# Smoking Status
+plotViolin(data=list(datatb1_followup_nonsmoker, datatb2_followup_nonsmoker,
+                     datatb1_followup_smoker, datatb2_followup_smoker),
+           textLabels=c("Non-Smoker", "Smoker"), title="Smoking Status")
+
+# Cough
+plotViolin(data=list(datatb1_followup_nocough, datatb2_followup_nocough,
+               datatb1_followup_cough, datatb2_followup_cough),
+     textLabels=c("No Cough", "Cough"), title="Presence of Cough")
+
+# Fever
+plotViolin(data=list(no_fever_baseline, no_fever_followup,
+                     fever_baseline, fever_followup),
+           textLabels=c("No Fever", "Fever"), title="Presence of Fever")
+
+# Night Sweat
+plotViolin(data=list(no_night_sweat_baseline, no_night_sweat_followup,
+                     night_sweat_baseline, night_sweat_followup),
+           textLabels=c("No Night Sweat", "Night Sweat"), title="Presence of Night Sweat")
+
