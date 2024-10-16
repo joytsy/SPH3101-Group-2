@@ -36,7 +36,11 @@ plotViolin <- function(data, textLabels, title) {
   {
     VIOLIN_DATA[[i]] = list()
     dens = density(xlevels[[i]])
-    VIOLIN_DATA[[i]]$x = pmax(dens$x, 0) # ensure density does not fall below 0
+    
+    # Clip the density values to the min/max of the data
+    dens$x = pmin(pmax(dens$x, min(xlevels[[i]])), max(xlevels[[i]]))
+    
+    VIOLIN_DATA[[i]]$x = dens$x
     VIOLIN_DATA[[i]]$y = dens$y
   }
   
