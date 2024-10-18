@@ -35,8 +35,8 @@ for(i in 1:length(scoresComparisonData))
   VIOLIN_DATA[[i]]$y = pmax(dens$y, 0) # ensure density does not fall below 0
 }
 
-# save in plots folder
-png(filename = 'plots/stigmaScoresComparisonPlot.png',width = 20,height = 12,units = 'cm',res = 700) # save in plots folder
+# save in folder
+# png(filename = 'stigmaScoresComparisonPlot.png',width = 20,height = 12,units = 'cm',res = 700) # save in plots folder
 if(1)
 {
   YRANGE = c(0,38)
@@ -112,5 +112,5 @@ if(1)
   popViewport()
   
 }
-dev.off()
+# dev.off()
 

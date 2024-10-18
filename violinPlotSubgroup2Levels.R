@@ -52,8 +52,8 @@ plotViolin <- function(data, textLabels, title) {
     VIOLIN_DATA[[i]]$y = dens$y
   }
   
-  # save plot in plots folder
-  png(filename = paste0('plots/', gsub(" ", "", title), 'Violin.png'),width = 20,height = 15,units = 'cm',res = 700)
+  # save plot in folder
+  # png(filename = paste0(gsub(" ", "", title), 'Violin.png'),width = 20,height = 15,units = 'cm',res = 700)
   if(1)
   {
     YRANGE = c(0,38)
@@ -114,7 +114,7 @@ plotViolin <- function(data, textLabels, title) {
     popViewport()
     
   }
-  dev.off()
+  # dev.off()
 }
 
 #################################################

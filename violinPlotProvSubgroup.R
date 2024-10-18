@@ -44,8 +44,8 @@ for(i in 1:length(xlevels))
   VIOLIN_DATA[[i]]$y = dens$y
 }
 
-# saves in plots folder
-png(filename = 'plots/ProvinceViolin.png',width = 20,height = 15,units = 'cm',res = 700)
+# saves in folder
+# png(filename = 'ProvinceViolin.png',width = 20,height = 15,units = 'cm',res = 700)
 if(1)
 {
   YRANGE = c(0,38)
@@ -114,5 +114,5 @@ if(1)
   popViewport()
   
 }
-dev.off()
+# dev.off()
 
