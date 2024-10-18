@@ -6,7 +6,12 @@ library(grid)
 COLS = c('lightpink','steelblue')	# changed color codes
 
 scoresComparisonData = list(datatb1$stigma_score[!is.na(datatb2$stigma_score)],
-           datatb2$stigma_score[!is.na(datatb2$stigma_score)]) 
+           datatb2$stigma_score[!is.na(datatb2$stigma_score)])
+
+# Summary Statistics for both time frames
+summary(datatb1$stigma_score[!is.na(datatb2$stigma_score)]) # mean=15.37, median=16
+summary(datatb2$stigma_score[!is.na(datatb2$stigma_score)]) # mean=13.21, median=14
+
 
 BOXPLOT_DATA = list()  
 VIOLIN_DATA = list()  
@@ -26,11 +31,12 @@ for(i in 1:length(scoresComparisonData))
 {
   VIOLIN_DATA[[i]] = list()
   dens = density(scoresComparisonData[[i]])
-  VIOLIN_DATA[[i]]$x = dens$x
+  VIOLIN_DATA[[i]]$x = pmax(dens$x, 0) # ensure density does not fall below 0
   VIOLIN_DATA[[i]]$y = pmax(dens$y, 0) # ensure density does not fall below 0
 }
 
-# png(filename = 'violin.png',width = 12,height = 12,units = 'cm',res = 700)
+# save in plots folder
+png(filename = 'plots/stigmaScoresComparisonPlot.png',width = 20,height = 12,units = 'cm',res = 700) # save in plots folder
 if(1)
 {
   YRANGE = c(0,38)
@@ -39,12 +45,12 @@ if(1)
   grid.newpage()  
   pushViewport(plotViewport(c(4,4,1.5,1.5),xscale=c(XRANGE),yscale=c(YRANGE)))
   grid.rect()
-  grid.yaxis(gp=gpar(fontsize=8))
-  grid.xaxis(gp=gpar(fontsize=8))
+  grid.yaxis(gp=gpar(fontsize=10))
+  grid.xaxis(gp=gpar(fontsize=10))
   
-  grid.text('Stigma Scores of Follow Up Cohort at Baseline and Follow-Up', y=unit(1, 'npc')+unit(1, 'lines'), gp=gpar(fontsize=14,fontface = 'bold'))
-  grid.text('Follow-Up',x=unit(-3.4,'lines'),rot=90,gp=gpar(fontsize=12,fontface = 'bold'))
-  grid.text('Baseline',y=unit(-2.4,'lines'),rot=0,gp=gpar(fontsize=12,fontface = 'bold'))
+  grid.text('Stigma Scores of Follow Up Cohort at Baseline and Follow-Up', y=unit(1, 'npc')+unit(0.7, 'lines'), gp=gpar(fontsize=15,fontface = 'bold'))
+  grid.text('Follow-Up',x=unit(-2.8,'lines'),rot=90,gp=gpar(fontsize=14,fontface = 'bold'))
+  grid.text('Baseline',y=unit(-2.4,'lines'),rot=0,gp=gpar(fontsize=14,fontface = 'bold'))
   
   XAXISPOS <- c(1:4)  # Positions of the boxplots on the x-axis
   
@@ -106,5 +112,5 @@ if(1)
   popViewport()
   
 }
-# dev.off()
+dev.off()
 

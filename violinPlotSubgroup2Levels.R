@@ -52,31 +52,33 @@ plotViolin <- function(data, textLabels, title) {
     VIOLIN_DATA[[i]]$y = dens$y
   }
   
-  # png(filename = 'violin.png',width = 12,height = 12,units = 'cm',res = 700)
+  # save plot in plots folder
+  png(filename = paste0('plots/', gsub(" ", "", title), 'Violin.png'),width = 20,height = 15,units = 'cm',res = 700)
   if(1)
   {
     YRANGE = c(0,38)
     XRANGE = c(0,4)
+    scale = 2.5 # added scale to adjust widths of violin plots
     grid.newpage()  
-    pushViewport(plotViewport(c(3,3.5,1.5,1.5),xscale=XRANGE+0.5,yscale=c(YRANGE)))
+    pushViewport(plotViewport(c(2.8,3.4,1.4,1.4),xscale=XRANGE+0.5,yscale=c(YRANGE)))
     grid.rect()
     grid.xaxis(label= c("Baseline", "Follow-Up", "Baseline", "Follow-Up"),  
-               at = 1:4,gp=gpar(fontsize=8))
+               at = 1:4,gp=gpar(fontsize=10))
     grid.text(label= c(textLabels[1], textLabels[2]),  # text labels for each level
               x = unit(c(1.5,3.5),units = 'native'),
-              y= unit(-2,units = 'lines'),
-              gp=gpar(fontsize=10,fontface = 'bold'))
+              y= unit(-1.8,units = 'lines'),
+              gp=gpar(fontsize=12,fontface = 'bold'))
     
     # added grid text for displaying number of observations in each level
     grid.text(label=c(paste0("(n = ", as.character(length(xlevels[[1]])), ")"), paste0("(n = ", as.character(length(xlevels[[3]])), ")")),
               x = unit(c(1.5, 3.5), units = 'native'),
-              y = unit(-3.5, units = 'lines'),
-              gp=gpar(fontsize=8))
+              y = unit(-3, units = 'lines'),
+              gp=gpar(fontsize=10))
     
-    grid.yaxis(gp=gpar(fontsize=8))
+    grid.yaxis(gp=gpar(fontsize=10))
     
-    grid.text(paste('Distribution of Stigma Scores across', title), y=unit(1, 'npc')+unit(1, 'lines'), gp=gpar(fontsize=10,fontface = 'bold'))
-    grid.text('Stigma Score',x=unit(-3.4,'lines'),rot=90,gp=gpar(fontsize=10,fontface = 'bold'))
+    grid.text(paste('Distribution of Stigma Scores across', title), y=unit(1, 'npc')+unit(0.5, 'lines'), gp=gpar(fontsize=14,fontface = 'bold'))
+    grid.text('Stigma Score',x=unit(-2.8,'lines'),rot=90,gp=gpar(fontsize=12,fontface = 'bold'))
     
     XAXISPOS <- c(1:4)  # Positions of the boxplots on the x-axis
     
@@ -91,12 +93,12 @@ plotViolin <- function(data, textLabels, title) {
                  gp = gpar(col = COLS[i], lwd = 2))
       
       
-      grid.polygon(x = i+c(-VIOLIN_DATA[[i]]$y,rev(VIOLIN_DATA[[i]]$y)),
+      grid.polygon(x = i+c(-(VIOLIN_DATA[[i]]$y*scale),rev(VIOLIN_DATA[[i]]$y*scale)),
                    y = c(VIOLIN_DATA[[i]]$x,rev(VIOLIN_DATA[[i]]$x)),
                    default.units = 'native',
                    gp = gpar(col = NA, fill = COLS[i]))
       
-      offset = 0.02
+      offset = 0.05
       # Draw the box from Q1 to Q3
       grid.polygon(x = c(XAXISPOS[i] - offset, XAXISPOS[i] + offset, XAXISPOS[i] + offset, XAXISPOS[i] - offset), 
                    y = c(BOXPLOT_DATA[[i]]$q1, BOXPLOT_DATA[[i]]$q1, BOXPLOT_DATA[[i]]$q3, BOXPLOT_DATA[[i]]$q3), 
@@ -112,6 +114,7 @@ plotViolin <- function(data, textLabels, title) {
     popViewport()
     
   }
+  dev.off()
 }
 
 #################################################
@@ -146,4 +149,14 @@ plotViolin(data=list(no_fever_baseline, no_fever_followup,
 plotViolin(data=list(no_night_sweat_baseline, no_night_sweat_followup,
                      night_sweat_baseline, night_sweat_followup),
            textLabels=c("No Night Sweat", "Night Sweat"), title="Presence of Night Sweat")
+
+# Chest Pain
+plotViolin(data=list(datatb1_followup_nochestpain, datatb2_followup_nochestpain,
+                     datatb1_followup_chestpain, datatb2_followup_chestpain),
+           textLabels=c("No Chest Pain", "Chest Pain"), title="Presence of Chest Pain")
+
+# TB Type (TB Bac+ and TB Bac-)
+plotViolin(data=list(datatb1_followup_TBbacPlus, datatb2_followup_TBbacPlus,
+                     datatb1_followup_TBbacMinus, datatb2_followup_TBbacMinus),
+           textLabels=c("TB Bac+", "TB Bac-"), title="TB Types")
 

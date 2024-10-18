@@ -144,8 +144,8 @@ shapiro.test(datatb2_followup_nocough$stigma_score)
 
 ####################################  Statistical Tests ####################################   
 ##############  case status
-wilcox.test(datatb1_followup_case_completed$stigma_score, datatb2_followup_case_completed$stigma_score) #p-val < 0.01
-wilcox.test(datatb1_followup_case_cured$stigma_score, datatb2_followup_case_cured$stigma_score) #p-val < 0.01
+wilcox.test(datatb1_followup_case_completed$stigma_score, datatb2_followup_case_completed$stigma_score, paired=TRUE) #p-val < 0.01
+wilcox.test(datatb1_followup_case_cured$stigma_score, datatb2_followup_case_cured$stigma_score, paired=TRUE) #p-val < 0.01
 summary(datatb1_followup_case_completed$stigma_score) #mean=15
 summary(datatb2_followup_case_completed$stigma_score) #mean=12.63
 summary(datatb1_followup_case_cured$stigma_score) #mean=16.11
@@ -156,8 +156,8 @@ boxplot(datatb1_followup_case_cured$stigma_score,datatb2_followup_case_cured$sti
         main = "Boxplot of Stigma Scores of Case Status: Cured Cohort at Baseline and Follow-Up")
 
 ##############  smoking status
-wilcox.test(datatb1_followup_smoker$stigma_score, datatb2_followup_smoker$stigma_score) #p-val < 0.01
-wilcox.test(datatb1_followup_nonsmoker$stigma_score, datatb2_followup_nonsmoker$stigma_score) #p-val < 0.01
+wilcox.test(datatb1_followup_smoker$stigma_score, datatb2_followup_smoker$stigma_score, paired=TRUE) #p-val < 0.01
+wilcox.test(datatb1_followup_nonsmoker$stigma_score, datatb2_followup_nonsmoker$stigma_score, paired=TRUE) #p-val < 0.01
 summary(datatb1_followup_smoker$stigma_score) #mean=15.84
 summary(datatb2_followup_smoker$stigma_score) #mean=13.27
 summary(datatb1_followup_nonsmoker$stigma_score) #mean=15.01
@@ -168,8 +168,8 @@ boxplot(datatb1_followup_nonsmoker$stigma_score,datatb2_followup_nonsmoker$stigm
         main = "Boxplot of Stigma Scores of Non-smoker Cohort at Baseline and Follow-Up")
 
 ##############  cough symptom
-wilcox.test(datatb1_followup_cough$stigma_score, datatb2_followup_cough$stigma_score) #p-val < 0.01
-wilcox.test(datatb1_followup_nocough$stigma_score, datatb2_followup_nocough$stigma_score) #p-val < 0.01
+wilcox.test(datatb1_followup_cough$stigma_score, datatb2_followup_cough$stigma_score, paired=TRUE) #p-val < 0.01
+wilcox.test(datatb1_followup_nocough$stigma_score, datatb2_followup_nocough$stigma_score, paired=TRUE) #p-val < 0.01
 summary(datatb1_followup_cough$stigma_score) #mean=15.81
 summary(datatb2_followup_cough$stigma_score) #mean=13.86
 summary(datatb1_followup_nocough$stigma_score) #mean=14.04
@@ -240,8 +240,8 @@ shapiro.test(datatb2_followup_TBbacMinus$stigma_score) #p-value < 0.01
 ####################################  Statistical Tests #################################### 
 
 ##############  chest pain symptom
-wilcox.test(datatb1_followup_chestpain$stigma_score, datatb2_followup_chestpain$stigma_score) #p-val =  0.04902
-wilcox.test(datatb1_followup_nochestpain$stigma_score, datatb2_followup_nochestpain$stigma_score) #p-val < 0.01
+wilcox.test(datatb1_followup_chestpain$stigma_score, datatb2_followup_chestpain$stigma_score, paired=TRUE) #p-val =  0.02049
+wilcox.test(datatb1_followup_nochestpain$stigma_score, datatb2_followup_nochestpain$stigma_score, paired=TRUE) #p-val < 0.01
 summary(datatb1_followup_chestpain$stigma_score) #mean=16.63
 summary(datatb2_followup_chestpain$stigma_score) #mean=15.45
 summary(datatb1_followup_nochestpain$stigma_score) #mean=15.07
@@ -253,8 +253,8 @@ boxplot(datatb1_followup_nochestpain$stigma_score,datatb2_followup_nochestpain$s
 
 
 ##############  TB Type
-wilcox.test(datatb1_followup_TBbacPlus$stigma_score, datatb2_followup_TBbacPlus$stigma_score) #p-val < 0.01
-wilcox.test(datatb1_followup_TBbacMinus$stigma_score, datatb2_followup_TBbacMinus$stigma_score) #p-val < 0.01
+wilcox.test(datatb1_followup_TBbacPlus$stigma_score, datatb2_followup_TBbacPlus$stigma_score, paired=TRUE) #p-val < 0.01
+wilcox.test(datatb1_followup_TBbacMinus$stigma_score, datatb2_followup_TBbacMinus$stigma_score, paired=TRUE) #p-val < 0.01
 summary(datatb1_followup_TBbacPlus$stigma_score) #mean=16.11
 summary(datatb2_followup_TBbacPlus$stigma_score) #mean=14.41
 summary(datatb1_followup_TBbacMinus$stigma_score) #mean=15.05
