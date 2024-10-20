@@ -1,4 +1,5 @@
-# SPH3101-Group-2
+# SPH3101-Group-2 #
+Repository for project studying the Methods and Findings on Stigma among Tuberculosis (TB) Patients in Cambodia
+
 ### Instructions ###
-1. Run `load_data.R` to load datasets
-2. `MyFunctions.R` contains custom functions to pre-process our raw dataset
+Run `0_Master.R` to run all analysis
