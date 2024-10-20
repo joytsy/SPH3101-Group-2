@@ -11,7 +11,7 @@ library(tidyverse)
 # install.packages("tidyverse")
 
 # Run 1_basicInfoFollowUpEDA script to get processed data (might need to modify code later, probs put processed data in 1 script)
-source('1_basicInfoFollowUpEDA.r')
+source('archive/1_basicInfoFollowUpEDA.r')
 
 # -------- Data Processing and Manipulation --------
 data <- data %>%

@@ -1,5 +1,6 @@
 # Note: File to be run after fu_stigma_preprocess.R
 library(tidyverse)
+source('archive/fu_stigma_preprocess.R')
 
 # Examining HIV and Followup
 # Create a contingency table of HIV status and Follow-up status

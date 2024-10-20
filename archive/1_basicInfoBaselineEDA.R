@@ -1,8 +1,8 @@
 # ++++++++ Basic Information TB Disease Cohort EDA ++++++++ 
 
 # ++++++++ BASELINE SURVEY EDA ++++++++ 
-# Run 'load_data.r' script to load data dataset, else can run line 6
-source('load_data.r')
+# Run '1_load_data.r' script to load data dataset, else can run line 6
+source('1_load_data.r')
 # load('data/datatb1.rdata')
 
 # -------- Load Libraries --------

@@ -9,7 +9,7 @@ library(tidyverse)
 # install.packages("tidyverse")
 
 # Run 1_basicInfoBaselineEDA script to get processed data (might need to modify code later, probs put processed data in 1 script)
-source('1_basicInfoBaselineEDA.r')
+source('archive/1_basicInfoBaselineEDA.r')
 
 # -------- Data Processing and Manipulation --------
 # create column to categorise education levels into (primary and below) and (above primary)
