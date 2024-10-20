@@ -1,7 +1,7 @@
 # ++++++++ Basic Information TB Disease Cohort EDA ++++++++ 
 
 # ++++++++ FOLLOWUP SURVEY EDA ++++++++ 
-# Run 'load_data.r' script to load datatb2 dataset, else can run the following line
+# Run '1_load_data.r' script to load datatb2 dataset, else can run the following line
 # load('data/datatb2.rdata')
 
 # -------- Load Libraries --------
