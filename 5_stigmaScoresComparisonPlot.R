@@ -1,7 +1,8 @@
-# run 'stigmaEDA.R' script
-source('stigmaEDA.R')
+source('1_load_data.r')
+source('2_MyFunctions.R')
 
-library(grid)
+datatb1 <- process_datatb1_function(datatb1)
+datatb2 <- process_datatb2_function(datatb2)
 
 COLS = c('lightpink','steelblue')	# changed color codes
 

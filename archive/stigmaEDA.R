@@ -51,17 +51,6 @@ ggplot(datatb2, aes(x = stigma_threshold)) +
 # Convert the labelled variable for status during follow-up to numeric
 datatb2 <- datatb2 %>%
   mutate(a1_status_tb_during_fu = as.numeric(a1_status_tb_during_fu))
-# Brief summary of count of reasons for individuals who did not follow up 
-datatb2 %>% 
-  mutate(a1_status_tb_during_fu = recode(a1_status_tb_during_fu,
-                                               `1` = "Alive",
-                                               `2` = "Dead",
-                                               `3` = "Refuse to follow-up",   
-                                               `4` = "Loss to follow-up")) %>%
-  group_by(a1_status_tb_during_fu) %>%
-  summarise(
-    count=n()
-  )
 
 # filtered follow up data set for participants who completed followed up
 datatb2_followup <- datatb2 %>%

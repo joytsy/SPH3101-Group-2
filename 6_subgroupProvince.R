@@ -1,7 +1,7 @@
 # Load Datasets, Run data-processing function source('load_data.r')
-source('load_data.R')
-source('MyFunctions.R')
-source('processBeforeSubgroup.R')
+source('1_load_data.R')
+source('2_MyFunctions.R')
+source('2_processBeforeSubgroup.R')
 
 ###################################################
 ## Subgroup Analysis (Province) on stigma_scores ##

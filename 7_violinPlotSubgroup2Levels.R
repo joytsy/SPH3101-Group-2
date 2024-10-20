@@ -3,15 +3,15 @@
 #############################################################
 
 # Run subgroup scripts before running plotViolin function to obtain finalised subgroup data for visualisations
-source('processBeforeSubgroup.R')
-source('subgroupAgeGroups.R')
-source('subgroupFever.R')
-source('subgroupNightSweat.R')
-source('subgroupCough.R')
-source('subgroupSmokingStatus.R')
-source('subgroupChestPain.R')
-source('subgroupTBtype.R')
-source('subgroupCaseStatus.R')
+source('2_processBeforeSubgroup.R')
+source('6_subgroupAgeGroups.R')
+source('6_subgroupFever.R')
+source('6_subgroupNightSweat.R')
+source('6_subgroupCough.R')
+source('6_subgroupSmokingStatus.R')
+source('6_subgroupChestPain.R')
+source('6_subgroupTBtype.R')
+source('6_subgroupCaseStatus.R')
 
 
 ########################################################
