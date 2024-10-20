@@ -1,6 +1,6 @@
 # Run Scripts for data and preprocessing functions
-source('load_data.R')
-source('MyFunctions.R')
+source('1_load_data.R')
+source('2_MyFunctions.R')
 
 # Dataset
 data <- process_datatb1_function(datatb1)

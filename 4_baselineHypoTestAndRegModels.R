@@ -3,18 +3,20 @@
 # -------- SUMMARY -------- 
 # Tests used for hypothesis testing include t-test and wilcoxon for continuous variables,
 # while chi-square test for categorical variables.
-# Regression Models were also fitted with statistically significant variables (after conducting hypo testing)
-# and we slowly reduced the number of variables in the models until model could no longer improve and remaining variables are significant.
+
 # Initial factors we thought would be significant in determining stigma levels: age, sex, education level, smoking, alcohol, income
 # After conducting hypothesis testing, significant factors were: several tb symptoms experienced (cough, chest pain, dyspnea, weight loss, fever, night sweat),
-# current diagnosis of TB type, province and operational districts.
+# TB type, and Province.
+
+# Regression Models were then fitted with statistically significant variables (after conducting hypo testing)
+# and we slowly reduced the number of variables in the models until model AIC value could not be decreased further.
+
 # After running linear regression on the significant factors, we are left with cough, chest pain, night sweat and province as significant variables for stigma scores.
-# Whereas for logistic regression, we are left with cough, fever, night sweat and province
-# as significant variables for whether one experiences high or low stigma.
+# Whereas for logistic regression, we are left with cough, fever, night sweat and province as significant variables for whether one experiences high or low stigma.
 
 # Load Datasets, Run data-processing function source('load_data.r')
-source('load_data.R')
-source('MyFunctions.R')
+source('1_load_data.R')
+source('2_MyFunctions.R')
 
 # Datasets
 data <- process_datatb1_function(datatb1)

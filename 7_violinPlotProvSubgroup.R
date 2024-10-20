@@ -3,8 +3,8 @@
 #############################################################
 
 # Run subgroup script to obtain finalised subgroup province data for visualisations
-source('processBeforeSubgroup.R')
-source('subgroupProvince.R')
+source('2_processBeforeSubgroup.R')
+source('6_subgroupProvince.R')
 
 provData = list(kampCham_baseline, kampCham_followup,
             tboung_baseline, tboung_followup,
