@@ -1,63 +1,54 @@
-# Run 'load_data.r' script to load datatb1 dataset, else can run the following line
-load('data/datatb1.rdata')
-load('data/datatb2.rdata')
+# Run Scripts for data and preprocessing functions
+source('load_data.R')
+source('MyFunctions.R')
 
-# -------- Load Libraries --------
-# Load package ggplot2 and dplyr(to be used for data manipulation and data visualisation)
-library(ggplot2)
-library(dplyr)
-library(tidyr)
-library(haven)
-# library(reshape2)
-
-#################################################
-## Data Processing and Manipulation (Baseline) ##
-#################################################
-# remove observations where individuals < 18 yo
-datatb1 <- datatb1 %>% 
-  filter(a1_q3>=18)
-
-### Create additional "stigma_score" column using sum a1_q30 to a1_q41, note: max stigma_score is 12*4=48 with 48 being greater stigma experience
-datatb1 <- datatb1 %>%
-  mutate(stigma_score = rowSums(across(a1_q30:a1_q41)))
-
-# Categorize stigma_score using mean (use baseline mean of 15.4)
-threshold <- 15.4 # mean of baseline stigma_scores
-datatb1 <- datatb1 %>%
-  mutate(
-    stigma_threshold = case_when(
-      stigma_score > threshold ~ "High",  # Categorize as High if stigma_score > 15.4
-      stigma_score <= threshold ~ "Low",  # Categorize as Low if stigma_score <= 15.4
-      TRUE ~ NA_character_  # Handle any unexpected cases
-    )
-  )
-
-##################################################
-## Data Processing and Manipulation (Follow up) ##
-##################################################
-# remove observations where individuals < 18 yo (Assuming we have filtered them in datatb1 already)
-datatb2 <- datatb2 %>%
-  filter(a1_record_id %in% datatb1$a1_record_id)
-
-# Create "stigma_score" column for Follow-up
-datatb2 <- datatb2 %>%
-  mutate(stigma_score = rowSums(across(a1_q7_fu:a1_q18_fu)))
-
-# Categorize stigma_score using mean (use baseline mean of 15.4)
-datatb2 <- datatb2 %>%
-  mutate(
-    stigma_threshold = case_when(
-      stigma_score > threshold ~ "High",  # Categorize as High if stigma_score > 15.4
-      stigma_score <= threshold ~ "Low",  # Categorize as Low if stigma_score <= 15.4
-      TRUE ~ NA_character_  # Handle any unexpected cases
-    )
-  )
+# Processed Datasets
+datatb1 <- process_datatb1_function(datatb1)
+datatb2 <- process_datatb2_function(datatb2)
 ####################################################################
 # Final Filtered Datasets for all 621 Participants who followed up #
 ####################################################################
+# Convert the labelled variable for status during follow-up to numeric
+datatb2 <- datatb2 %>%
+  mutate(a1_status_tb_during_fu = as.numeric(a1_status_tb_during_fu))
+
 # Followup Dataset for those 621 who completed followup
 datatb2_followup <- datatb2 %>%
   filter(a1_status_tb_during_fu %in% 1)
 
 ## Baseline Dataset for the 621 participants who completed followup
 baseline_followup_complete <- datatb1[datatb1$a1_record_id %in% datatb2_followup$a1_record_id, ]
+
+
+################################################################
+# Filtered Datasets for all Participants who did not follow up #
+################################################################
+# filtered follow-up dataset for participants who did not follow up (dead/loss/refuse) to get their a1_record_id
+# all dnf
+datatb2_no_followup <- datatb2 %>%
+  filter(a1_status_tb_during_fu %in% c(2, 3, 4))
+# refuse dnf
+datatb2_refuse_to_followup_stigma <- datatb2 %>%
+  filter(a1_status_tb_during_fu == 3)
+# loss dnf
+datatb2_loss_to_followup_stigma <- datatb2 %>%
+  filter(a1_status_tb_during_fu == 4)
+
+## results from baseline for participants who did not follow up 
+baseline_dnf <- datatb1[datatb1$a1_record_id %in% datatb2_no_followup$a1_record_id, ]
+baseline_refuse_followup <- datatb1[datatb1$a1_record_id %in% datatb2_refuse_to_followup_stigma$a1_record_id, ]
+baseline_loss_followup <- datatb1[datatb1$a1_record_id %in% datatb2_loss_to_followup_stigma$a1_record_id, ]
+
+
+####################################################
+# Filtered Datasets for <55 and >= 55 yo Age group #
+####################################################
+# Based on Cambodia's definition of older population,
+# split 621 individuals into following age groups: < 55 and >= 55
+baseline_followup_complete_oldYoung <- baseline_followup_complete %>% 
+  mutate(older = case_when(
+    a1_q3 >= 55 ~ "Yes",  # Categorize as Yes if individual is 55 and above
+    a1_q3 < 55 ~ "No",  # Categorize as No if individual is below 55
+  ),
+  .after = a1_q3
+  )

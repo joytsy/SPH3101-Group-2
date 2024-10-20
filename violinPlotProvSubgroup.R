@@ -3,10 +3,8 @@
 #############################################################
 
 # Run subgroup script to obtain finalised subgroup province data for visualisations
-source('subgroupProvinceAge.R')
-
-# Load grid library
-library(grid)
+source('processBeforeSubgroup.R')
+source('subgroupProvince.R')
 
 provData = list(kampCham_baseline, kampCham_followup,
             tboung_baseline, tboung_followup,

@@ -4,12 +4,15 @@
 
 # Run subgroup scripts before running plotViolin function to obtain finalised subgroup data for visualisations
 source('processBeforeSubgroup.R')
-source('subgroupProvinceAge.R')
-source('subgroupFeverWeightSweat.R')
-source('subgroupCaseCoughSmokeTbtypeChestpain.R')
+source('subgroupAgeGroups.R')
+source('subgroupFever.R')
+source('subgroupNightSweat.R')
+source('subgroupCough.R')
+source('subgroupSmokingStatus.R')
+source('subgroupChestPain.R')
+source('subgroupTBtype.R')
+source('subgroupCaseStatus.R')
 
-# Load grid library
-library(grid)
 
 ########################################################
 # plotViolin function for subgroups with only 2 levels #
