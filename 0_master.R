@@ -15,6 +15,7 @@ source('3_edaMedicalConditionsVariables.R')
 
 # 4. Run Linear and Logistic Regression
 source('4_baselineHypoTestAndRegModels.R')
+source('4_resultsStepwiseReg.R')
 
 # 5. Analysis of Stigma Scores Over Time and Relevant Plot
 source('5_stigmaScoresOverTimeHypoTest.R')
